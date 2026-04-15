@@ -80,6 +80,29 @@ CFG_Region GetSystemRegion() {
 	return static_cast<CFG_Region>(systemRegion);
 }
 
+void DrawScamWarning() {
+	C2D_Text c2d_text1;
+	C2D_Text c2d_text2;
+	std::string line1 = std::format("{} is free and open-source. If you paid for the app, you", APP_TITLE);
+	std::string line2 = std::format("have been scammed. Demand your money back", APP_TITLE);
+	float size = 0.5f;
+	int offset = 6;
+	int horizontalOffset = offset;
+	float line2Y = offset + 10;
+	float line1Y = line2Y - GetStringHeight(size, line1.c_str());
+
+	C2D_TextBufClear(textBuf);
+
+	C2D_TextFontParse(&c2d_text1, font, textBuf, line1.c_str());
+	C2D_TextOptimize(&c2d_text1);
+
+	C2D_TextFontParse(&c2d_text2, font, textBuf, line2.c_str());
+	C2D_TextOptimize(&c2d_text2);
+
+	C2D_DrawText(&c2d_text1, C2D_WithColor | C2D_AlignLeft, horizontalOffset, line1Y, 0.5f, size, size, C2D_Color32(255, 255, 255, 0xFF));
+	C2D_DrawText(&c2d_text2, C2D_WithColor | C2D_AlignLeft, horizontalOffset, line2Y, 0.5f, size, size, C2D_Color32(255, 255, 255, 0xFF));
+}
+
 // code thats mostly by me again 
 void DrawVersionString() {
 	C2D_Text c2d_text;
