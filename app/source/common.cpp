@@ -88,7 +88,7 @@ void DrawScamWarning() {
 	float size = 0.5f;
 	int offset = 6;
 	int horizontalOffset = offset;
-	float line2Y = offset + 10;
+	float line2Y = (240 + 2) - offset - GetStringHeight(size, line2.c_str());
 	float line1Y = line2Y - GetStringHeight(size, line1.c_str());
 
 	C2D_TextBufClear(textBuf);
@@ -109,16 +109,14 @@ void DrawVersionString() {
 	std::string text = std::format("{} {}.{}.{}", APP_TITLE, VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 	float size = 0.5f;
 	int offset = 6;
-	int bottomOffset = (240 + 2)- offset; // 3ds vertical resolution - offset, but add 2 to the vertical resolution to account for the vertical padding?
 	int horizontalOffset = 400 - offset;
-	
+
 	C2D_TextBufClear(textBuf);
-	
+
 	C2D_TextFontParse(&c2d_text, font, textBuf, text.c_str());
 	C2D_TextOptimize(&c2d_text);
 
-	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, bottomOffset - GetStringHeight(size, text.c_str()), 0.5f, size, size, C2D_Color32(255, 255, 255, 0xFF));
-	
+	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, offset, 0.5f, size, size, C2D_Color32(255, 255, 255, 0xFF));
 }
 
 bool GetLumaOptionByIndex(LumaConfigBitIndex index, s64 options) {
