@@ -83,8 +83,8 @@ CFG_Region GetSystemRegion() {
 void DrawScamWarning() {
 	C2D_Text c2d_text1;
 	C2D_Text c2d_text2;
-	std::string line1 = std::format("{} is free and open-source. If you paid for the app, you", APP_TITLE);
-	std::string line2 = "have been scammed. Demand your money back";
+	std::string line1 = std::format("{} is free and open-source. If you paid to have it installed,", APP_TITLE);
+	std::string line2 = "you have been scammed. Demand your money back";
 	float size = 0.5f;
 	int offset = 6;
 	int horizontalOffset = offset;
