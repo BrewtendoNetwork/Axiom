@@ -27,9 +27,9 @@ Any region miiverse module is fine and should generate a patch that is identical
 
 ## Method 2 (Requires running a GM9 script)
 1. Have a hacked 3DS
-2. Download dump_modules.gm9 from [here](https://github.com/TraceEntertains/nimbus-module-extractor/releases/latest)
+2. Download dump_modules.gm9 from [here](https://github.com/TraceEntertains/axiom-module-extractor/releases/latest)
 3. Put it in sd:/gm9/scripts
 4. Run the script (Home Button -> Scripts -> dump_modules.gm9)
 5. Turn off your 3DS and remove the SD card.
-6. Copy the folder (named patches) from the nimbusmodules folder located on your SD card to your local clone of nimbus, and merge when prompted.
+6. Copy the folder (named patches) from the axiommodules folder located on your SD card to your local clone of axiom, and merge when prompted.
 7. Done!

@@ -12,8 +12,8 @@
 #include <vector>
 #include <string.h>
 
-const char *NIMBUS_PLUGIN_MAGIC = "NMBS";
-constexpr u32 NIMBUS_PLUGIN_VERSION = SYSTEM_VERSION(1, 0, 0);
+const char *AXIOM_PLUGIN_MAGIC = "AXOM";
+constexpr u32 AXIOM_PLUGIN_VERSION = SYSTEM_VERSION(1, 0, 0);
 
 namespace CTRPluginFramework
 {
@@ -119,8 +119,8 @@ namespace CTRPluginFramework
     int     main(void)
     {
         // If the launcher was used, handle any required cleanup
-        if (memcmp(pluginHeader->config, NIMBUS_PLUGIN_MAGIC, 4) == 0) {
-            if (pluginHeader->config[1] == NIMBUS_PLUGIN_VERSION) {
+        if (memcmp(pluginHeader->config, AXIOM_PLUGIN_MAGIC, 4) == 0) {
+            if (pluginHeader->config[1] == AXIOM_PLUGIN_VERSION) {
                 plgLdrInit();
                 bool prevPluginState = pluginHeader->config[2] != 0;
                 PLGLDR__SetPluginLoaderState(prevPluginState);
@@ -131,7 +131,7 @@ namespace CTRPluginFramework
             }
         }
 
-        PluginMenu* menu = new PluginMenu("Nimbus Plugin", 1, 0, 0);
+        PluginMenu* menu = new PluginMenu("Axiom Plugin", 1, 0, 0);
         menu->SynchronizeWithFrame(true);
 
         if (getPiaLoggerStatus() == PatternStatus::Active) {

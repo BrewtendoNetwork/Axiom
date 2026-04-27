@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <string>
 
-#define NIMBUS_UPDATE_PATH "/3ds/nimbus/update"
+#define AXIOM_UPDATE_PATH "/3ds/axiom/update"
 
 enum class NascEnvironment : u8 {
 	NASC_ENV_Prod = 0, // nintendo
@@ -62,10 +62,10 @@ struct MainStruct {
 	C2D_Sprite nintendo_unloaded_selected;
 	C2D_Sprite nintendo_loaded_selected;
 	C2D_Sprite nintendo_loaded_deselected;
-	C2D_Sprite pretendo_unloaded_deselected;
-	C2D_Sprite pretendo_unloaded_selected;
-	C2D_Sprite pretendo_loaded_selected;
-	C2D_Sprite pretendo_loaded_deselected;
+	C2D_Sprite brewtendo_unloaded_deselected;
+	C2D_Sprite brewtendo_unloaded_selected;
+	C2D_Sprite brewtendo_loaded_selected;
+	C2D_Sprite brewtendo_loaded_deselected;
 	C2D_Sprite top;
 
 	u32 screen = 0;
@@ -97,12 +97,12 @@ struct MainStruct {
 	PromptState prompt;
 };
 
-#define LOG_NIMBUS_ERROR(mainStruct, fmt) \
+#define LOG_AXIOM_ERROR(mainStruct, fmt) \
 	if (mainStruct->errorString[0] == 0) {                                       \
 		snprintf(mainStruct->errorString, sizeof(mainStruct->errorString), fmt); \
 	}
 
-#define LOGF_NIMBUS_ERROR(mainStruct, fmt, ...) \
+#define LOGF_AXIOM_ERROR(mainStruct, fmt, ...) \
 	if (mainStruct->errorString[0] == 0) {                                                    \
 		snprintf(mainStruct->errorString, sizeof(mainStruct->errorString), fmt, __VA_ARGS__); \
 	}
@@ -110,7 +110,7 @@ struct MainStruct {
 #define handleResult(action, mainStruct, name) \
 	rc = action;                                                                \
 	if (R_FAILED(rc)) {                                                         \
-		LOGF_NIMBUS_ERROR(mainStruct, "%s failed with error: %08lx", name, rc); \
+		LOGF_AXIOM_ERROR(mainStruct, "%s failed with error: %08lx", name, rc); \
 		printf("%s failed with error: %08lx\n\n", name, rc);                    \
 	}
 

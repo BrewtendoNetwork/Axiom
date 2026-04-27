@@ -10,7 +10,7 @@ COMBINED_OUT_FOLDER := $(OUT_FOLDER)/combined_out
 3DS_OUT         := 3ds
 CIA_OUT         := cias
 
-NIMBUS_UPDATE_OUT   := 3ds/nimbus/update
+AXIOM_UPDATE_OUT   := 3ds/axiom/update
 
 FRIENDS_TITLE_ID    := 0004013000003202
 ACT_TITLE_ID        := 0004013000003802
@@ -21,22 +21,22 @@ MIIVERSE_ID_JPN     := 000400300000BC02
 MIIVERSE_ID_USA     := 000400300000BD02
 MIIVERSE_ID_EUR     := 000400300000BE02
 
-ACT_OUT             := $(NIMBUS_UPDATE_OUT)/$(ACT_TITLE_ID).ips
-FRIENDS_OUT         := $(NIMBUS_UPDATE_OUT)/$(FRIENDS_TITLE_ID).ips
-HTTP_OUT            := $(NIMBUS_UPDATE_OUT)/$(HTTP_TITLE_ID).ips
-SOCKET_OUT          := $(NIMBUS_UPDATE_OUT)/$(SOCKET_TITLE_ID).ips
-SSL_OUT             := $(NIMBUS_UPDATE_OUT)/$(SSL_TITLE_ID).ips
-MIIVERSE_OUT_JPN    := $(NIMBUS_UPDATE_OUT)/$(MIIVERSE_ID_JPN).ips
-MIIVERSE_OUT_USA    := $(NIMBUS_UPDATE_OUT)/$(MIIVERSE_ID_USA).ips
-MIIVERSE_OUT_EUR    := $(NIMBUS_UPDATE_OUT)/$(MIIVERSE_ID_EUR).ips
-PLUGIN_OUT          := $(NIMBUS_UPDATE_OUT)/nimbus.3gx
+ACT_OUT             := $(AXIOM_UPDATE_OUT)/$(ACT_TITLE_ID).ips
+FRIENDS_OUT         := $(AXIOM_UPDATE_OUT)/$(FRIENDS_TITLE_ID).ips
+HTTP_OUT            := $(AXIOM_UPDATE_OUT)/$(HTTP_TITLE_ID).ips
+SOCKET_OUT          := $(AXIOM_UPDATE_OUT)/$(SOCKET_TITLE_ID).ips
+SSL_OUT             := $(AXIOM_UPDATE_OUT)/$(SSL_TITLE_ID).ips
+MIIVERSE_OUT_JPN    := $(AXIOM_UPDATE_OUT)/$(MIIVERSE_ID_JPN).ips
+MIIVERSE_OUT_USA    := $(AXIOM_UPDATE_OUT)/$(MIIVERSE_ID_USA).ips
+MIIVERSE_OUT_EUR    := $(AXIOM_UPDATE_OUT)/$(MIIVERSE_ID_EUR).ips
+PLUGIN_OUT          := $(AXIOM_UPDATE_OUT)/axiom.3gx
 
 all:
 	@rm -rf $(OUT_FOLDER)
 
 # make patches + app folders
-	@mkdir -p $(PATCHES_OUT_FOLDER)/$(NIMBUS_UPDATE_OUT)
-	@touch $(PATCHES_OUT_FOLDER)/$(NIMBUS_UPDATE_OUT)/update.txt
+	@mkdir -p $(PATCHES_OUT_FOLDER)/$(AXIOM_UPDATE_OUT)
+	@touch $(PATCHES_OUT_FOLDER)/$(AXIOM_UPDATE_OUT)/update.txt
 	@mkdir -p $(3DSX_OUT_FOLDER) $(CIA_OUT_FOLDER)/$(CIA_OUT) $(COMBINED_OUT_FOLDER)/$(CIA_OUT)
 	
 # build patches
@@ -51,7 +51,7 @@ all:
 	@cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_JPN)
 	@cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_USA)
 	@cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_EUR)
-	@cp -r patches/miiverse/*.pem $(PATCHES_OUT_FOLDER)/$(NIMBUS_UPDATE_OUT)
+	@cp -r patches/miiverse/*.pem $(PATCHES_OUT_FOLDER)/$(AXIOM_UPDATE_OUT)
 
 # build plugin
 	@$(MAKE) -C plugin

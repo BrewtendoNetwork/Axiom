@@ -31,10 +31,10 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-APP_TITLE       := 	Nimbus
-APP_DESCRIPTION := 	Nimbus
+APP_TITLE       := 	Axiom
+APP_DESCRIPTION := 	Axiom
 APP_AUTHOR	:=	Zaksabeast, shutterbug2000
-TARGET		:=	nimbus
+TARGET		:=	axiom
 BUILD		:=	build
 SOURCES		:=	source source/states source/sysmodules
 DATA		:=	data
@@ -43,7 +43,7 @@ ROMFS		:=	romfs
 GRAPHICS	:=	$(ROMFS)/gfx
 GFXBUILD 	:=  $(BUILD)
 
-RSF_FILE := meta/nimbus-cia.rsf
+RSF_FILE := meta/axiom-cia.rsf
 
 ICON      := meta/icon.png
 BNR_IMAGE := meta/banner.png
@@ -51,9 +51,9 @@ BNR_AUDIO := meta/audio.wav
 
 VERSION_HEADER = version.hpp
 
-VERSION_MAJOR := 2
-VERSION_MINOR := 1
-VERSION_MICRO := 0
+VERSION_MAJOR := 0
+VERSION_MINOR := 5
+VERSION_MICRO := 3
 
 #GFXBUILD	:=	$(ROMFS)/gfx
 

@@ -6,9 +6,9 @@
 #include "../plgldr.h"
 
 constexpr Result ResultFPDLocalAccountNotExists = 0xC880C4ED; // FPD::LocalAccountNotExists
-const char *NIMBUS_PLUGIN = "/luma/plugins/nimbus.3gx";
-const char *NIMBUS_PLUGIN_MAGIC = "NMBS";
-constexpr u32 NIMBUS_PLUGIN_VERSION = SYSTEM_VERSION(1, 0, 0);
+const char *AXIOM_PLUGIN = "/luma/plugins/axiom.3gx";
+const char *AXIOM_PLUGIN_MAGIC = "AXOM";
+constexpr u32 AXIOM_PLUGIN_VERSION = SYSTEM_VERSION(1, 0, 0);
 
 Result retPNID = 0;
 u32 pnidAccountSlot = 0;
@@ -122,9 +122,9 @@ void MainUI::migrateAccount(MainStruct *mainStruct) {
 
 void MainUI::unlinkPNID(MainStruct *mainStruct) {
     if (R_FAILED(retPNID = ACTA_UnbindServerAccount(pnidAccountSlot, true))) {
-        LOG_NIMBUS_ERROR(mainStruct, std::format("ACTA_UnbindServerAccount failed with error code {}!", retPNID).c_str());
+        LOG_AXIOM_ERROR(mainStruct, std::format("ACTA_UnbindServerAccount failed with error code {}!", retPNID).c_str());
 	} else {
-		LOG_NIMBUS_ERROR(mainStruct, "Successfully unlinked PNID!");
+		LOG_AXIOM_ERROR(mainStruct, "Successfully unlinked PNID!");
 	}
 }
 
@@ -144,12 +144,12 @@ void MainUI::launchPlugin(MainStruct *mainStruct) {
     plgparam.pluginMemoryStrategy = PLG_STRATEGY_SWAP;
     plgparam.persistent = 1;
     plgparam.lowTitleId = 0;
-    strcpy(plgparam.path, NIMBUS_PLUGIN);
+    strcpy(plgparam.path, AXIOM_PLUGIN);
 
     // Use custom header on config as a way to differentiate between plugin load from launcher
     // and load by the user (by saving the plugin file as default or on a specific game)
-    strcpy(reinterpret_cast<char*>(plgparam.config), NIMBUS_PLUGIN_MAGIC);
-    plgparam.config[1] = NIMBUS_PLUGIN_VERSION;
+    strcpy(reinterpret_cast<char*>(plgparam.config), AXIOM_PLUGIN_MAGIC);
+    plgparam.config[1] = AXIOM_PLUGIN_VERSION;
 
     handleResult(plgLdrInit(), mainStruct, "Initialize plg:ldr");
     if (R_FAILED(rc)) {
@@ -164,7 +164,7 @@ void MainUI::launchPlugin(MainStruct *mainStruct) {
     }
 
     if (version < SYSTEM_VERSION(1, 0, 2)) {
-        LOG_NIMBUS_ERROR(mainStruct, "Unsupported plg:ldr version, please update Luma3DS");
+        LOG_AXIOM_ERROR(mainStruct, "Unsupported plg:ldr version, please update Luma3DS");
         plgLdrExit();
         return;
     }
@@ -187,7 +187,7 @@ void MainUI::launchPlugin(MainStruct *mainStruct) {
     plgLdrExit();
 
     // Logs won't override any previous errors
-    LOG_NIMBUS_ERROR(mainStruct, "Nimbus plugin ready! Launch a game from the Home Menu");
+    LOG_AXIOM_ERROR(mainStruct, "Axiom plugin ready! Launch a game from the Home Menu");
     return;
 }
 
@@ -262,10 +262,10 @@ void MainUI::drawPrompt(MainStruct* mainStruct)
 
 bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
-    // Check if Nimbus has been updated
+    // Check if Axiom has been updated
     if (!mainStruct->updateChecked) {
         mainStruct->updateChecked = true;
-        if (auto* updateCheck = std::fopen(NIMBUS_UPDATE_PATH "/update.txt", "rb")) {
+        if (auto* updateCheck = std::fopen(AXIOM_UPDATE_PATH "/update.txt", "rb")) {
             std::fclose(updateCheck);
 
             migrateAccount(mainStruct);
@@ -275,41 +275,41 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
                 mkdir("/luma", 0777);
                 mkdir("/luma/sysmodules", 0777);
                 std::remove("/luma/sysmodules/0004013000003202.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/0004013000003202.ips", "/luma/sysmodules/0004013000003202.ips");
+                std::rename(AXIOM_UPDATE_PATH "/0004013000003202.ips", "/luma/sysmodules/0004013000003202.ips");
                 std::remove("/luma/sysmodules/0004013000003802.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/0004013000003802.ips", "/luma/sysmodules/0004013000003802.ips");
+                std::rename(AXIOM_UPDATE_PATH "/0004013000003802.ips", "/luma/sysmodules/0004013000003802.ips");
                 std::remove("/luma/sysmodules/0004013000002902.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/0004013000002902.ips", "/luma/sysmodules/0004013000002902.ips");
+                std::rename(AXIOM_UPDATE_PATH "/0004013000002902.ips", "/luma/sysmodules/0004013000002902.ips");
                 std::remove("/luma/sysmodules/0004013000002E02.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/0004013000002E02.ips", "/luma/sysmodules/0004013000002E02.ips");
+                std::rename(AXIOM_UPDATE_PATH "/0004013000002E02.ips", "/luma/sysmodules/0004013000002E02.ips");
                 std::remove("/luma/sysmodules/0004013000002F02.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/0004013000002F02.ips", "/luma/sysmodules/0004013000002F02.ips");
+                std::rename(AXIOM_UPDATE_PATH "/0004013000002F02.ips", "/luma/sysmodules/0004013000002F02.ips");
 
                 mkdir("/luma/titles", 0777);
                 mkdir("/luma/titles/000400300000BC02", 0777);
                 std::remove("/luma/titles/000400300000BC02/code.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/000400300000BC02.ips", "/luma/titles/000400300000BC02/code.ips");
+                std::rename(AXIOM_UPDATE_PATH "/000400300000BC02.ips", "/luma/titles/000400300000BC02/code.ips");
 
                 mkdir("/luma/titles/000400300000BD02", 0777);
                 std::remove("/luma/titles/000400300000BD02/code.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/000400300000BD02.ips", "/luma/titles/000400300000BD02/code.ips");
+                std::rename(AXIOM_UPDATE_PATH "/000400300000BD02.ips", "/luma/titles/000400300000BD02/code.ips");
 
                 mkdir("/luma/titles/000400300000BE02", 0777);
                 std::remove("/luma/titles/000400300000BE02/code.ips");
-                std::rename(NIMBUS_UPDATE_PATH "/000400300000BE02.ips", "/luma/titles/000400300000BE02/code.ips");
+                std::rename(AXIOM_UPDATE_PATH "/000400300000BE02.ips", "/luma/titles/000400300000BE02/code.ips");
 
                 mkdir("/luma/plugins", 0777);
-                std::remove("/luma/plugins/nimbus.3gx");
-                std::rename(NIMBUS_UPDATE_PATH "/nimbus.3gx",           "/luma/plugins/nimbus.3gx");
+                std::remove("/luma/plugins/axiom.3gx");
+                std::rename(AXIOM_UPDATE_PATH "/axiom.3gx",           "/luma/plugins/axiom.3gx");
 
                 std::remove("/3ds/juxt-prod.pem");
-                std::rename(NIMBUS_UPDATE_PATH "/juxt-prod.pem",        "/3ds/juxt-prod.pem");
+                std::rename(AXIOM_UPDATE_PATH "/juxt-prod.pem",        "/3ds/juxt-prod.pem");
 
-                std::remove(NIMBUS_UPDATE_PATH "/update.txt");
+                std::remove(AXIOM_UPDATE_PATH "/update.txt");
             }
 
             // Logs won't override any previous errors
-            LOG_NIMBUS_ERROR(mainStruct, "Nimbus has been updated!");
+            LOG_AXIOM_ERROR(mainStruct, "Axiom has been updated!");
 
             aptSetHomeAllowed(false);
             mainStruct->needsReboot = true;
@@ -330,7 +330,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
                     unlinkPNID(mainStruct);
                     break;
                 default:
-                    LOG_NIMBUS_ERROR(mainStruct, "Unknown prompt called.");
+                    LOG_AXIOM_ERROR(mainStruct, "Unknown prompt called.");
                     break;
             }
             mainStruct->prompt.result = PromptResult::None;
@@ -358,21 +358,21 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
     if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Prod) {
         if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Prod) {
             C2D_DrawSprite(&mainStruct->nintendo_loaded_selected);
-            C2D_DrawSprite(&mainStruct->pretendo_unloaded_deselected);
+            C2D_DrawSprite(&mainStruct->brewtendo_unloaded_deselected);
         }
         else {
             C2D_DrawSprite(&mainStruct->nintendo_unloaded_selected);
-            C2D_DrawSprite(&mainStruct->pretendo_loaded_deselected);
+            C2D_DrawSprite(&mainStruct->brewtendo_loaded_deselected);
         }
     }
     else if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Test) {
         if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Test) {
             C2D_DrawSprite(&mainStruct->nintendo_unloaded_deselected);
-            C2D_DrawSprite(&mainStruct->pretendo_loaded_selected);
+            C2D_DrawSprite(&mainStruct->brewtendo_loaded_selected);
         }
         else {
             C2D_DrawSprite(&mainStruct->nintendo_loaded_deselected);
-            C2D_DrawSprite(&mainStruct->pretendo_unloaded_selected);
+            C2D_DrawSprite(&mainStruct->brewtendo_unloaded_selected);
         }
     }
     C2D_DrawSprite(&mainStruct->header);
@@ -407,17 +407,17 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
             // We need to confirm we actually even have a linked PNID.
 	        if (R_SUCCEEDED(retPNID)) {
 		        if (R_FAILED(retPNID = ACT_GetAccountIndexOfFriendAccountId(&pnidAccountSlot, 2))) {
-			        LOG_NIMBUS_ERROR(mainStruct, std::format("ACT_GetAccountIndexOfFriendAccountId failed with error code {}!", retPNID).c_str());
+			        LOG_AXIOM_ERROR(mainStruct, std::format("ACT_GetAccountIndexOfFriendAccountId failed with error code {}!", retPNID).c_str());
 		        }
 	        }
 
             if (pnidAccountSlot == 0) {
-                LOG_NIMBUS_ERROR(mainStruct, "There is no PNID linked on this console!");
+                LOG_AXIOM_ERROR(mainStruct, "There is no PNID linked on this console!");
             }
 
 	        if (R_SUCCEEDED(retPNID)) {
 		        if (R_FAILED(retPNID = ACT_GetAccountInfo(pnid, sizeof(pnid), pnidAccountSlot, INFO_TYPE_ACCOUNT_ID))) {
-			        LOG_NIMBUS_ERROR(mainStruct, std::format("ACT_GetAccountInfo failed with error code {}!", retPNID).c_str());
+			        LOG_AXIOM_ERROR(mainStruct, std::format("ACT_GetAccountInfo failed with error code {}!", retPNID).c_str());
 		        }
 	        }
 
@@ -425,7 +425,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
 		        if (pnid[0] != '\0') {
 			        openPrompt(mainStruct, std::format("Are you sure you would like to unlink your PNID {}? Your PNID can be relinked at any time.", pnid), PromptStatus::PNIDUnlink);
 		        } else {
-			        LOG_NIMBUS_ERROR(mainStruct, "There is no PNID linked on this console!");
+			        LOG_AXIOM_ERROR(mainStruct, "There is no PNID linked on this console!");
 		        }
 	        }
         }
