@@ -24,7 +24,7 @@ der_cert_address equ 0x38DCB0
 
 // set url for miiverse/bver
 .org discovery_string
-	.ascii "https://discovery.olv.pretendo.cc/v1/endpoint", 0
+	.ascii "https://discovery.olv.brewtendo.cc/v1/endpoint", 0
 
 .include "src/certs.s"
 .include "src/mounting.s"
