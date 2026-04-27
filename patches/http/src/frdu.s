@@ -19,7 +19,7 @@ get_nasc_environment: ; 0x1accc
 	mrc     p15, 0x0, r4, c13, c0, 0x3 ; get our thread local storage and store it in r4
 	ldr     r0, =0x00320042            ; load frd:u SetClientSdkVersion header into r0
 	str     r0, [r4, #0x80]!           ; set cmdbuf[0] to our cmdhdr from r0
-	ldr     r0, =0x70000C8             ; set sdk version, same as axiom
+	ldr     r0, =0x70000C8             ; set sdk version, same as nimbus
 	str     r0, [r4, #0x4]             ; set cmdbuf[1] to the sdk version
 	mov     r0, 32                     ; set placeholder kernel process id
 	str     r0, [r4, #0x8]             ; set cmdbuf[2] to the placeholder process id

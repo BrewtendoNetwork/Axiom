@@ -31,9 +31,9 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-APP_TITLE       := 	Axiom
+APP_TITLE       := 	Credits to Zaksabeast, shutterbug2000!
 APP_DESCRIPTION := 	Axiom
-APP_AUTHOR	:=	Zaksabeast, shutterbug2000
+APP_AUTHOR	:=	By vugbdok8307, andrea__2209
 TARGET		:=	axiom
 BUILD		:=	build
 SOURCES		:=	source source/states source/sysmodules
@@ -53,7 +53,7 @@ VERSION_HEADER = version.hpp
 
 VERSION_MAJOR := 0
 VERSION_MINOR := 5
-VERSION_MICRO := 3
+VERSION_MICRO := 2
 
 #GFXBUILD	:=	$(ROMFS)/gfx
 
