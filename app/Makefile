@@ -30,7 +30,6 @@ include $(DEVKITARM)/3ds_rules
 #     - <Project name>.png
 #     - icon.png
 #     - <libctru folder>/default_icon.png
-# 		Credits to Zaksabeast, shutterbug2000!
 #---------------------------------------------------------------------------------
 APP_TITLE       := 	Axiom
 APP_DESCRIPTION := 	Axiom
