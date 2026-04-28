@@ -33,7 +33,7 @@ enum class LumaConfigBitIndex : s32 {
 
 const int targetLumaVersion = 13;
 const int GetSystemInfoCFW = 0x10000; // the type for Luma3DS' GetSystemInfo hook that returns CFW info
-const u32 defaultColor = C2D_Color32(255, 255, 255, 0xFF);
+const u32 defaultColor = C2D_Color32(108, 98, 64, 255);
 
 enum class PromptResult {
     None,
@@ -67,6 +67,7 @@ struct MainStruct {
 	C2D_Sprite brewtendo_loaded_selected;
 	C2D_Sprite brewtendo_loaded_deselected;
 	C2D_Sprite top;
+    C2D_Sprite bottom;
 
 	u32 screen = 0;
 	u32 state = 0;

@@ -53,6 +53,6 @@ target
 .vscode
 
 # Publish
-.DS_Store
+*.DS_Store
 patches/ssl
-patches/ssl
+*.sb3

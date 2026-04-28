@@ -64,7 +64,7 @@ void DrawControls() {
 	C2D_TextFontParse(&c2d_text, font, textBuf, text);
 	C2D_TextOptimize(&c2d_text);
 
-	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset - GetStringHeight(size, text), 0.5f, size, size, C2D_Color32(255, 255, 255, 0xFF));
+	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset - GetStringHeight(size, text), 0.5f, size, size, C2D_Color32(108, 98, 64, 255));
 
 }
 
@@ -94,7 +94,7 @@ void DrawVersionString() {
 	C2D_TextFontParse(&c2d_text, font, textBuf, text.c_str());
 	C2D_TextOptimize(&c2d_text);
 
-	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, bottomOffset - GetStringHeight(size, text.c_str()), 0.5f, size, size, C2D_Color32(255, 255, 255, 0xFF));
+	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, bottomOffset - GetStringHeight(size, text.c_str()), 0.5f, size, size, C2D_Color32(108, 98, 64, 255));
 	
 }
 

@@ -15,6 +15,7 @@ static void sceneInit(void)
 {
 	C2D_SpriteSheet spriteSheet = C2D_SpriteSheetLoadFromMem(sheet_t3x, sheet_t3x_size);
 	C2D_SpriteFromSheet(&mainStruct.top, spriteSheet, sheet_top_idx);
+    C2D_SpriteFromSheet(&mainStruct.bottom, spriteSheet, sheet_bottom_idx);
 	C2D_SpriteFromSheet(&mainStruct.go_back, spriteSheet, sheet_go_back_idx);
 	C2D_SpriteFromSheet(&mainStruct.header, spriteSheet, sheet_header_idx);
 	C2D_SpriteFromSheet(&mainStruct.nintendo_unloaded_deselected, spriteSheet, sheet_nintendo_unloaded_deselected_idx);
@@ -25,10 +26,13 @@ static void sceneInit(void)
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_unloaded_selected, spriteSheet, sheet_brewtendo_unloaded_selected_idx);
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_loaded_selected, spriteSheet, sheet_brewtendo_loaded_selected_idx);
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_loaded_deselected, spriteSheet, sheet_brewtendo_loaded_deselected_idx);
-    C2D_SpriteSetCenter(&mainStruct.top, 0.49f, 0.49f);
-    C2D_SpriteSetPos(&mainStruct.top, 400/2, 240/2);
+    
+    C2D_SpriteSetCenter(&mainStruct.top, 0.5f, 0.5f);
+    C2D_SpriteSetPos(&mainStruct.top, 200, 120);
+    C2D_SpriteSetScale(&mainStruct.top, 0.10f, 0.10f)
     C2D_SpriteSetPos(&mainStruct.go_back, 0, 214);
-    C2D_SpriteSetPos(&mainStruct.header, 95, 14);
+    C2D_SpriteSetCenter(&mainStruct.header, 0.5f, 0.0f);
+    C2D_SpriteSetPos(&mainStruct.header, 160, 0);
     C2D_SpriteSetPos(&mainStruct.brewtendo_loaded_selected, 49, 59);
     C2D_SpriteSetPos(&mainStruct.brewtendo_unloaded_selected, 49, 59);
     C2D_SpriteSetPos(&mainStruct.brewtendo_unloaded_deselected, 49, 59);
@@ -37,7 +41,9 @@ static void sceneInit(void)
     C2D_SpriteSetPos(&mainStruct.nintendo_unloaded_selected, 165, 59);
     C2D_SpriteSetPos(&mainStruct.nintendo_unloaded_deselected, 165, 59);
     C2D_SpriteSetPos(&mainStruct.nintendo_loaded_deselected, 165, 59);
-    C2D_SpriteSetScale(&mainStruct.top, 0.9f, 0.9f);
+    C2D_SpriteSetScale(&mainStruct.top, 0.10f, 0.10f);
+    C2D_SpriteSetCenter(&mainStruct.bottom, 0.5f, 0.5f);
+    C2D_SpriteSetPos(&mainStruct.bottom, 160, 120);
 	
 	textBuf = C2D_TextBufNew(4096); // initialize the text buffer with a max glyph count of 4096
 }
