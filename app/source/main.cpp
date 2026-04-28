@@ -29,7 +29,6 @@ static void sceneInit(void)
     
     C2D_SpriteSetCenter(&mainStruct.top, 0.5f, 0.5f);
     C2D_SpriteSetPos(&mainStruct.top, 200, 120);
-    C2D_SpriteSetScale(&mainStruct.top, 0.100f, 0.100f);
     C2D_SpriteSetPos(&mainStruct.go_back, 0, 214);
     C2D_SpriteSetCenter(&mainStruct.header, 0.5f, 0.0f);
     C2D_SpriteSetPos(&mainStruct.header, 160, 0);
