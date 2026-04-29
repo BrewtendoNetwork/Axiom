@@ -81,6 +81,7 @@ struct MainStruct {
 	bool buttonWasPressed = false;
 	bool needsReboot = false;
 	bool updateChecked = false;
+    bool musicStarted = false;
 
 	char errorString[256];
 
