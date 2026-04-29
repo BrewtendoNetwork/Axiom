@@ -13,6 +13,7 @@ constexpr u32 AXIOM_PLUGIN_VERSION = SYSTEM_VERSION(1, 0, 0);
 Result retBNID = 0;
 u32 bnidAccountSlot = 0;
 AccountId bnid = {};
+
 void loadAndPlayBGM(const char* path) {
     FILE* f = fopen(path, "rb");
     if (!f) return;

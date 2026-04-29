@@ -49,12 +49,12 @@ static void sceneInit(void)
 int main()
 {
 	// Initialize the libs
- romfsInit();
+    romfsInit();
 	nsInit();
 	ndmuInit();
 	frdInit(false);
 	actInit(false);
- ndspInit();
+    ndspInit();
 	gfxInitDefault();
 	
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
@@ -118,7 +118,7 @@ int main()
 	// Deinitialize the libs
 	C2D_Fini();
 	C3D_Fini();
- ndspExit();
+    ndspExit();
 	gfxExit();
 	actExit();
 	frdExit();
