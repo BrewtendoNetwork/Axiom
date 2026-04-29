@@ -4,6 +4,7 @@
 #include "MainUI.hpp"
 #include "../sysmodules/acta.hpp"
 #include "../plgldr.h"
+#include <3ds/services/ndsp.h>
 
 constexpr Result ResultFPDLocalAccountNotExists = 0xC880C4ED; // FPD::LocalAccountNotExists
 const char *AXIOM_PLUGIN = "/luma/plugins/axiom.3gx";
@@ -290,8 +291,7 @@ void MainUI::drawPrompt(MainStruct* mainStruct)
 
 bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
-    bool MainUI::drawUI(MainStruct *mainStruct) {
-        
+    
         // One-time BGM Setup
         if (!mainStruct->musicStarted) {
             // Load and play BGM
