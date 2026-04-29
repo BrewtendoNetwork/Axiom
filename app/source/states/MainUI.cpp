@@ -4,7 +4,6 @@
 #include "MainUI.hpp"
 #include "../sysmodules/acta.hpp"
 #include "../plgldr.h"
-#include <3ds/services/ndsp.h>
 
 constexpr Result ResultFPDLocalAccountNotExists = 0xC880C4ED; // FPD::LocalAccountNotExists
 const char *AXIOM_PLUGIN = "/luma/plugins/axiom.3gx";
@@ -14,7 +13,6 @@ constexpr u32 AXIOM_PLUGIN_VERSION = SYSTEM_VERSION(1, 0, 0);
 Result retBNID = 0;
 u32 bnidAccountSlot = 0;
 AccountId bnid = {};
-
 void loadAndPlayBGM(const char* path) {
     FILE* f = fopen(path, "rb");
     if (!f) return;
@@ -31,8 +29,7 @@ void loadAndPlayBGM(const char* path) {
     fread(buffer, 1, dataSize, f);
     fclose(f);
 
-    // Setup the WaveBuffer
-    ndspWaveBuf waveBuf;
+    static ndspWaveBuf waveBuf;
     memset(&waveBuf, 0, sizeof(ndspWaveBuf));
     waveBuf.data_vaddr = buffer;
     waveBuf.nsamples = dataSize / 4;
@@ -40,7 +37,8 @@ void loadAndPlayBGM(const char* path) {
     waveBuf.status = NDSP_WBUF_FREE;
 
     DSP_FlushDataCache(buffer, dataSize);
-    ndspChnAppendWaveBuf(0, &waveBuf);
+    
+    ndspChnWaveBufAdd(0, &waveBuf);
 }
 
 Result MainUI::unloadAccount(MainStruct *mainStruct) {
