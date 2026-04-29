@@ -38,6 +38,9 @@ void loadAndPlayBGM(const char* path) {
 
     DSP_FlushDataCache(buffer, dataSize);
     
+    ndspChnSetRate(0, 16000.0f);
+    ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
+
     ndspChnWaveBufAdd(0, &waveBuf);
 }
 
