@@ -4,7 +4,7 @@
 #include "MainUI.hpp"
 #include "../sysmodules/acta.hpp"
 #include "../plgldr.h"
-#include <3ds/services/ndsp.h>
+#include <3ds/ndsp.h>
 
 constexpr Result ResultFPDLocalAccountNotExists = 0xC880C4ED; // FPD::LocalAccountNotExists
 const char *AXIOM_PLUGIN = "/luma/plugins/axiom.3gx";
