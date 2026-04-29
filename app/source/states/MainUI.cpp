@@ -290,7 +290,7 @@ void MainUI::drawPrompt(MainStruct* mainStruct)
 
 bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
-    bool MainUI::drawUI(MainStruct *mainStruct, ...) {
+    bool MainUI::drawUI(MainStruct *mainStruct) {
         
         // One-time BGM Setup
         if (!mainStruct->musicStarted) {
@@ -298,6 +298,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
             loadAndPlayBGM("romfs:/bgm/SETTINGS_SETUP_BGM.wav");
             mainStruct->musicStarted = true;
         }
+    }
 
     // Check if Axiom has been updated
     if (!mainStruct->updateChecked) {
