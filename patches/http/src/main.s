@@ -140,7 +140,7 @@ replace_function_addr equ 0x11AA70
 	target3:
 		.asciiz "pokemon-gl.com"
 	
-	replacementBrewtendo:
+    replacementBrewtendo:
 		.asciiz "brewtendo.cc"
 
 .close
