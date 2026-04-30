@@ -46,6 +46,8 @@ void loadAndPlayBGM(const char* path) {
 }
 
 void loadAndPlaySFX(const char* path) {
+    if (ndspChnIsPlaying(1)) return;
+
     FILE* f = fopen(path, "rb");
     if (!f) return;
 
@@ -54,22 +56,29 @@ void loadAndPlaySFX(const char* path) {
     u32 dataSize = size - 44;
     fseek(f, 44, SEEK_SET);
 
-    u8* buffer = (u8*)linearAlloc(dataSize);
+    static u8* buffer = nullptr;
+    static ndspWaveBuf waveBuf;
+
+    if (buffer) {
+        linearFree(buffer);
+        buffer = nullptr;
+    }
+
+    buffer = (u8*)linearAlloc(dataSize);
+    if (!buffer) { fclose(f); return; }
     fread(buffer, 1, dataSize, f);
     fclose(f);
 
-    static ndspWaveBuf waveBuf;
     memset(&waveBuf, 0, sizeof(ndspWaveBuf));
     waveBuf.data_vaddr = buffer;
-    waveBuf.nsamples = dataSize / 2; 
+    waveBuf.nsamples = dataSize / 2;
     waveBuf.looping = false;
-    waveBuf.status = NDSP_WBUF_FREE;
 
     DSP_FlushDataCache(buffer, dataSize);
 
     ndspChnSetRate(1, 16000.0f);
-    ndspChnSetFormat(1, NDSP_FORMAT_MONO_PCM16); 
-    ndspChnWaveBufAdd(1, &waveBuf);           
+    ndspChnSetFormat(1, NDSP_FORMAT_MONO_PCM16);
+    ndspChnWaveBufAdd(1, &waveBuf);
 }
 
 Result MainUI::unloadAccount(MainStruct *mainStruct) {
@@ -324,7 +333,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         // One-time BGM Setup
         if (!mainStruct->musicStarted) {
             // Load and play BGM
-            //"TEMP" loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
+            loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
             mainStruct->musicStarted = true;
         }
     
