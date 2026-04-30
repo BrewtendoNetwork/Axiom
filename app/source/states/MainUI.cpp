@@ -405,8 +405,8 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
             C2D_DrawSprite(&mainStruct->brewtendo_loaded_deselected);
         }
     }
-    else if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Test) {
-        if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Test) {
+    else if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Dev) {
+        if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Dev) {
             C2D_DrawSprite(&mainStruct->nintendo_unloaded_deselected);
             C2D_DrawSprite(&mainStruct->brewtendo_loaded_selected);
         }
@@ -427,12 +427,12 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
                 mainStruct->buttonWasPressed = true;
             }
             else if ((touch.px >= 49 && touch.px <= 49 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
-                mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Test;
+                mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Dev;
                 mainStruct->buttonWasPressed = true;
             }
         }
         else if (kDown & KEY_LEFT || kDown & KEY_RIGHT) {
-            mainStruct->buttonSelected = mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Test ? NascEnvironment::NASC_ENV_Prod : NascEnvironment::NASC_ENV_Test;
+            mainStruct->buttonSelected = mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Dev ? NascEnvironment::NASC_ENV_Prod : NascEnvironment::NASC_ENV_Dev;
         }
 
         if (mainStruct->prompt.active) {
@@ -489,10 +489,10 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         Result rc = unloadAccount(mainStruct);
         if (R_SUCCEEDED(rc)) {
             rc = switchAccounts(mainStruct, accountId);
-            if (rc == ResultFPDLocalAccountNotExists && accountId == 2) {
+            if (rc == ResultFPDLocalAccountNotExists && accountId == 3) {
                 // Clear the error to allow createAccount to override it
                 memset(mainStruct->errorString, 0, 256);
-                rc = createAccount(mainStruct, accountId, NascEnvironment::NASC_ENV_Test);
+                rc = createAccount(mainStruct, accountId, NascEnvironment::NASC_ENV_Dev);
             }
         }
 
