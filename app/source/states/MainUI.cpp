@@ -293,7 +293,7 @@ void MainUI::drawPrompt(MainStruct* mainStruct)
     const float boxX = (screenW - boxW) / 2.0f;
     const float boxY = (screenH - boxH) / 2.0f;
 
-    const u32 fill   = C2D_Color32(25, 25, 25, 240);
+    const u32 fill   = C2D_Color32(0x75, 0x6C, 0x48, 0xFF);
     const u32 border = C2D_Color32(255, 255, 255, 255);
     const u32 white  = C2D_Color32(0x75, 0x6C, 0x48, 0xFF);
 
@@ -424,7 +424,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
     C2D_DrawSprite(&mainStruct->top);
 
     if (mainStruct->errorString[0] != 0) {
-        DrawString(0.5f, 0xFF000000, std::format("{}{}", mainStruct->errorString, mainStruct->needsReboot ? "\n\nPress START to reboot the system" : ""), 0);
+        DrawString(0.5f, 0xFF756C48, std::format("{}{}", mainStruct->errorString, mainStruct->needsReboot ? "\n\nPress START to reboot the system" : ""), 0);
     }
 
     C2D_SceneBegin(bottom_screen);
