@@ -141,6 +141,6 @@ replace_function_addr equ 0x11AA70
 		.asciiz "pokemon-gl.com"
 	
 	replacementPretendo:
-		.asciiz "pretendo.cc"
+		.asciiz "brewtendo.cc"
 
 .close

@@ -89,9 +89,9 @@ start_replacements_addr equ 0x131088
 		.asciiz "nncs2.app.nintendowifi.net"
 
 	nncs1_pretendo_name:
-		.asciiz "nncs1.app.pretendo.cc"
+		.asciiz "nncs1.app.brewtendo.cc"
 
 	nncs2_pretendo_name:
-		.asciiz "nncs2.app.pretendo.cc"
+		.asciiz "nncs2.app.brewtendo.cc"
 
 .close
