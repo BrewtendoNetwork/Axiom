@@ -33,7 +33,7 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 APP_TITLE       := 	Axiom
 APP_DESCRIPTION := 	Axiom
-APP_AUTHOR	:=	By vugbdok8307, andrea__2209
+APP_AUTHOR	:=	By vugbdok8307, andrea__2209, thom5582
 TARGET		:=	axiom
 BUILD		:=	build
 SOURCES		:=	source source/states source/sysmodules

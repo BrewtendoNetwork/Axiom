@@ -51,12 +51,9 @@ void loadAndPlaySFX(const char* path) {
 
     fseek(f, 0, SEEK_END);
     u32 size = ftell(f);
-    
-    // Skip the 44-byte WAV header
     u32 dataSize = size - 44;
     fseek(f, 44, SEEK_SET);
 
-    // Allocate Linear Memory
     u8* buffer = (u8*)linearAlloc(dataSize);
     fread(buffer, 1, dataSize, f);
     fclose(f);
@@ -64,16 +61,15 @@ void loadAndPlaySFX(const char* path) {
     static ndspWaveBuf waveBuf;
     memset(&waveBuf, 0, sizeof(ndspWaveBuf));
     waveBuf.data_vaddr = buffer;
-    waveBuf.nsamples = dataSize / 4;
+    waveBuf.nsamples = dataSize / 2; 
     waveBuf.looping = false;
     waveBuf.status = NDSP_WBUF_FREE;
 
     DSP_FlushDataCache(buffer, dataSize);
-    
-    ndspChnSetRate(0, 16000.0f);
-    ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
 
-    ndspChnWaveBufAdd(0, &waveBuf);
+    ndspChnSetRate(1, 16000.0f);
+    ndspChnSetFormat(1, NDSP_FORMAT_MONO_PCM16); 
+    ndspChnWaveBufAdd(1, &waveBuf);           
 }
 
 Result MainUI::unloadAccount(MainStruct *mainStruct) {
