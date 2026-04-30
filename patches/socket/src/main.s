@@ -65,14 +65,14 @@ start_replacements_addr equ 0x131088
 		bl    strcmp                   ; compare hostname with nncs1
 		cmp   r0, #0
 		ldreq r0, =nncs1_pretendo_name ; if it matches, return the pretendo domain and its size
-		moveq r1, #21                  ; size of pretendo domain
+		moveq r1, #22                  ; size of pretendo domain
 		beq   handle_replacements_end
 		mov   r0, r10                  ; move original hostname to r0
 		ldr   r1, =nncs2_orig_name
 		bl    strcmp                   ; compare hostname with nncs2
 		cmp   r0, #0
 		ldreq r0, =nncs2_pretendo_name ; if it matches, return the pretendo domain and its size
-		moveq r1, #21                  ; size of pretendo domain
+		moveq r1, #22                  ; size of pretendo domain
 		movne r0, r10                  ; if none of the nncs domains match, use the original hostname
 		movne r1, #0                   ; size of 0 to represent the domain hasn't been modified
 
