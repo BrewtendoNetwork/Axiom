@@ -68,6 +68,7 @@ struct MainStruct {
 	C2D_Sprite brewtendo_loaded_deselected;
 	C2D_Sprite top;
     C2D_Sprite bottom;
+	C2D_Sprite test_message;
 
 	u32 screen = 0;
 	u32 state = 0;

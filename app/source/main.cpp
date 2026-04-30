@@ -26,7 +26,7 @@ static void sceneInit(void)
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_unloaded_selected, spriteSheet, sheet_brewtendo_unloaded_selected_idx);
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_loaded_selected, spriteSheet, sheet_brewtendo_loaded_selected_idx);
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_loaded_deselected, spriteSheet, sheet_brewtendo_loaded_deselected_idx);
-    C2D_SpriteFromSheet(&mainStruct.test_message, spriteSheet, sheet_mes/test_message_idx);
+    C2D_SpriteFromSheet(&mainStruct.test_message, spriteSheet, sheet_test_message_idx);
     
     C2D_SpriteSetCenter(&mainStruct.top, 0.5f, 0.5f);
     C2D_SpriteSetPos(&mainStruct.top, 200, 120);
