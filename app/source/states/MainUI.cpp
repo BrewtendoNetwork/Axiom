@@ -70,7 +70,7 @@ void loadAndPlaySFX(const char* path) {
 
     DSP_FlushDataCache(buffer, dataSize);
     
-    ndspChnSetRate(0, 44100.0f);
+    ndspChnSetRate(0, 16000.0f);
     ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
 
     ndspChnWaveBufAdd(0, &waveBuf);
@@ -330,7 +330,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         // One-time BGM Setup
         if (!mainStruct->musicStarted) {
             // Load and play BGM
-            loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
+            //loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
             mainStruct->musicStarted = true;
         }
     
