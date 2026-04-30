@@ -424,7 +424,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
     C2D_DrawSprite(&mainStruct->top);
 
     if (mainStruct->errorString[0] != 0) {
-        DrawString(0.5f, 0xFFFFFFFF, std::format("{}{}", mainStruct->errorString, mainStruct->needsReboot ? "\n\nPress START to reboot the system" : ""), 0);
+        DrawString(0.5f, 0xFF000000, std::format("{}{}", mainStruct->errorString, mainStruct->needsReboot ? "\n\nPress START to reboot the system" : ""), 0);
     }
 
     C2D_SceneBegin(bottom_screen);
