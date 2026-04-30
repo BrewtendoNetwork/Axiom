@@ -297,7 +297,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         // One-time BGM Setup
         if (!mainStruct->musicStarted) {
             // Load and play BGM
-            loadAndPlayBGM("romfs:/bgm/AXIOM_SETUP_BGM.wav");
+            loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
             mainStruct->musicStarted = true;
         }
 
