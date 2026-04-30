@@ -14,56 +14,6 @@ Result retBNID = 0;
 u32 bnidAccountSlot = 0;
 AccountId bnid = {};
 
-struct SoundEffect {
-    u8* data;
-    u32 size;
-    ndspWaveBuf waveBuf;
-};
-
-void preloadSFX(const char* path, SoundEffect& sfx) {
-    FILE* f = fopen(path, "rb");
-    if (!f) return;
-
-    fseek(f, 0, SEEK_END);
-    u32 totalSize = ftell(f);
-    sfx.size = totalSize - 44; // Subtract WAV header
-    fseek(f, 44, SEEK_SET);
-
-    sfx.data = (u8*)linearAlloc(sfx.size);
-    fread(sfx.data, 1, sfx.size, f);
-    fclose(f);
-
-    memset(&sfx.waveBuf, 0, sizeof(ndspWaveBuf));
-    sfx.waveBuf.data_vaddr = sfx.data;
-    sfx.waveBuf.nsamples = sfx.size / 4;
-    sfx.waveBuf.looping = false;
-    sfx.waveBuf.status = NDSP_WBUF_FREE;
-
-    DSP_FlushDataCache(sfx.data, sfx.size);
-}
-
-void playPreloadedSFX(int channel, SoundEffect& sfx) {
-    if (sfx.waveBuf.status != NDSP_WBUF_FREE && sfx.waveBuf.status != NDSP_WBUF_DONE) {
-        ndspChnWaveBufClear(channel);
-    }
-
-    ndspChnSetRate(channel, 16000.0f);
-    ndspChnSetFormat(channel, NDSP_FORMAT_STEREO_PCM16);
-    ndspChnWaveBufAdd(channel, &sfx.waveBuf);
-}
-
-SoundEffect sfxACC_TAP;
-SoundEffect ACC_SELECT;
-
-preloadSFX("romfs:/sfx/ACC_TAP.wav", sfxACC_TAP);
-preloadSFX("romfs:/sfx/ACC_SELECT.wav", sfxACC_SELECT);
-
-void cleanupAudio() {
-    ndspExit();
-    linearFree(sfxACC_TAP.data);
-    linearFree(sfxACC_SELECT.data);
-}
-
 void loadAndPlayBGM(const char* path) {
     FILE* f = fopen(path, "rb");
     if (!f) return;
@@ -506,17 +456,17 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
             if ((touch.px >= 165 && touch.px <= 165 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
                 mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Prod;
                 mainStruct->buttonWasPressed = true;
-                playPreloadedSFX(1, sfxACC_TAP);
+                loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
             }
             else if ((touch.px >= 49 && touch.px <= 49 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
                 mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Test;
                 mainStruct->buttonWasPressed = true;
-                playPreloadedSFX(1, sfxACC_TAP);
+                loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
             }
         }
         else if (kDown & KEY_LEFT || kDown & KEY_RIGHT) {
             mainStruct->buttonSelected = mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Test ? NascEnvironment::NASC_ENV_Prod : NascEnvironment::NASC_ENV_Test;
-            playPreloadedSFX(1, sfxACC_SELECT);
+            loadAndPlaySFX("romfs:/sfx/ACC_SELECT.wav");
         }
 
         if (mainStruct->prompt.active) {
