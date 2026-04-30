@@ -52,7 +52,7 @@ BNR_AUDIO := meta/audio.wav
 VERSION_HEADER = version.hpp
 
 VERSION_MAJOR := 0
-VERSION_MINOR := 7
+VERSION_MINOR := 8
 VERSION_MICRO := 0
 
 #GFXBUILD	:=	$(ROMFS)/gfx
