@@ -90,7 +90,7 @@ replace_function_addr equ 0x11AA70
 		sub     sp, sp, #0x28
 		str     r0, [r11, #-0x28] ; store r0 (our char* we are replacing string stuff on) into stack -0x28
 		bl      get_nasc_environment ; get the nasc environment
-		cmp     r0, #2 ; check if r0 is 2
+		cmp     r0, #3 ; check if r0 is 3
 		bne     handle_replacements_end ; if it isnt, skip the replacements
 
 		; else, run the replacements
