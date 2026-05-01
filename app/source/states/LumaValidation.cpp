@@ -37,7 +37,7 @@ void PlaySFX(const char* path) {
     ndspChnWaveBufAdd(1, &waveBuf);
 }
 
-bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch) 
+bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {	
     kDown |= kHeld; // make kDown have held keys aswell
 
@@ -54,7 +54,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
 		return false;
     }
 
-
+    PlaySFX("romfs:/sfx/MES_WARNING.wav");
     // if this is the first time the function has been run, get luma information
     if (mainStruct->firstRunOfState) {
         mainStruct->firmwareVersion = GetSystemInfoField(GetSystemInfoCFW, CFWSystemInfoField::FirmwareVersion);
@@ -71,11 +71,13 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     if (kDown & KEY_A) {
         PlaySFX("romfs:/sfx/BIN_NEXT.wav");
     }
+    if (kUp & KEY_B) {
+        PlaySFX("romfs:/sfx/BIN_FALSE.wav");
+    }
 
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
         C2D_DrawSprite(&mainStruct->blank_info_message);
-        PlaySFX("romfs:/sfx/MES_WARNING.wav");
         DrawString(0.5f, infoColor, std::format("Your Luma3DS version is out of date, it should be Luma3DS {} or newer for {} to function. Press A to exit.", targetLumaVersion, APP_TITLE), 0);
         
         // if A is pressed, return true to exit
@@ -85,13 +87,12 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     // else if either external firms and modules or game patching is not enabled, send another error and draw luma info if b is pressed
     else if (!mainStruct->externalFirmsAndModulesEnabled || !mainStruct->gamePatchingEnabled) {
         if (kDown & KEY_B) {
+            PlaySFX("romfs:/sfx/BIN_TRUE.wav");
             drawLumaInfo(mainStruct);
         }
         else {
             C2D_DrawSprite(&mainStruct->blank_info_message);
-            PlaySFX("romfs:/sfx/MES_WARNING.wav");
-            DrawString(0.5f, infoColor, std::format("Enable external FIRMs and modules: {}\nEnable game patching: {}\n\nFor {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\
-If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please open a support thread on our forum with an image of the more information screen attached.\nPress A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
+            DrawString(0.5f, infoColor, std::format("        Enable external FIRMs and modules: {}\n        Enable game patching: {}\n\n        For {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\        If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please go to our Discord and open a support forum with an image of the more information screen attached.\n        Press A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
         }
 
         // if A is pressed, return true to exit, else if X and Y is pressed

@@ -8,6 +8,7 @@
 #include "common.hpp"
 #include "states/LumaValidation.hpp"
 #include "states/MainUI.hpp"
+#include "states/TEST.hpp"
 
 MainStruct mainStruct = MainStruct();
 
@@ -112,7 +113,12 @@ int main()
 		if (mainStruct.state == 0) {
 			exit = LumaValidation::checkIfLumaOptionsEnabled(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);
 		} else {
-			exit = MainUI::drawUI(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);
+            
+            if (mainStruct.welcome == 1) {
+                exit = TEST::drawUI(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);
+            } else {
+                exit = MainUI::drawUI(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);
+            }
 		}
 		
 		mainStruct.lastState = mainStruct.state;

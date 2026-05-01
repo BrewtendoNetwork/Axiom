@@ -54,7 +54,7 @@ void DrawString(float size, u32 color, std::string text, int flags) {
 
 void DrawControls() {
 	C2D_Text c2d_text;
-	const char* text = "A: Select\nY: Launch plugin\nX: Unlink BNID\nSTART: HOME Menu";
+	const char* text = "A: Select\nY: Launch plugin\nX: Unlink BNID\nHOME: HOME Menu\nSTART: Exit";
 	float size = 0.5f;
 	int offset = 6;
 	int bottomOffset = (240 + 2)- offset; // 3ds vertical resolution - offset, but add 2 to the vertical resolution to account for the vertical padding?
