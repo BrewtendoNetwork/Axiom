@@ -192,6 +192,7 @@ void MainUI::unlinkBNID(MainStruct *mainStruct) {
         LOG_AXIOM_ERROR(mainStruct, std::format("ACTA_UnbindServerAccount failed with error code {}!", retBNID).c_str());
 	} else {
 		LOG_AXIOM_ERROR(mainStruct, "Successfully unlinked BNID!");
+        loadAndPlaySFX("romfs:/sfx/MES_INFO.wav");
 	}
 }
 
@@ -255,6 +256,7 @@ void MainUI::launchPlugin(MainStruct *mainStruct) {
 
     // Logs won't override any previous errors
     LOG_AXIOM_ERROR(mainStruct, "Axiom plugin ready! Launch a game from the Home Menu");
+    loadAndPlaySFX("romfs:/sfx/SFX_PUGIN_START.wav");
     return;
 }
 
@@ -385,7 +387,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
 
             // Logs won't override any previous errors
             LOG_AXIOM_ERROR(mainStruct, "Axiom has been updated!");
-
+            loadAndPlaySFX("romfs:/sfx/MES_INFO.wav");
             aptSetHomeAllowed(false);
             mainStruct->needsReboot = true;
             mainStruct->buttonWasPressed = false;
@@ -395,7 +397,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
 
     // if start is pressed, exit to hbl/the home menu depending on if the app was launched from cia or 3dsx
     if (kDown & KEY_START) return true;
-    
+    loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
     updatePrompt(mainStruct, kDown);
 
     if (mainStruct->prompt.active) {
