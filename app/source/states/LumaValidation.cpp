@@ -67,6 +67,10 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
         mainStruct->externalFirmsAndModulesEnabled = GetLumaOptionByIndex(LumaConfigBitIndex::ExternalFirmsAndModules, mainStruct->lumaOptions); // this
         mainStruct->gamePatchingEnabled = GetLumaOptionByIndex(LumaConfigBitIndex::GamePatching, mainStruct->lumaOptions); // and this might need multiple updates due to the fact that they fluctuate occasionally, if need be i can make a function that handles multiple versions though
     }
+    
+    if (kDown & KEY_A) {
+        loadAndPlaySFX("romfs:/sfx/BIN_NEXT.wav");
+    }
 
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
@@ -75,10 +79,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
         DrawString(0.5f, infoColor, std::format("Your Luma3DS version is out of date, it should be Luma3DS {} or newer for {} to function. Press A to exit.", targetLumaVersion, APP_TITLE), 0);
         
         // if A is pressed, return true to exit
-        if (kDown & KEY_A) {
-            loadAndPlaySFX("romfs:/sfx/BIN_NEXT.wav");
-        }
-        return true;
+        if (kDown & KEY_A) return true;
     }
     
     // else if either external firms and modules or game patching is not enabled, send another error and draw luma info if b is pressed
@@ -94,16 +95,11 @@ If you are sure both options are enabled and the options shown don't match your 
         }
 
         // if A is pressed, return true to exit, else if X and Y is pressed
-        if (kDown & KEY_A) {
-            loadAndPlaySFX("romfs:/sfx/BIN_NEXT.wav");
-        }
-        return true;
+        if (kDown & KEY_A) return true;
         else if (kDown & KEY_X && kDown & KEY_Y) mainStruct->state = 1; // bypass if I need some time to fix it and get it released
     }
     else {
-        if (kDown & KEY_B) {
-            drawLumaInfo(mainStruct);
-        }
+        if (kDown & KEY_A) drawLumaInfo(mainStruct);
         else mainStruct->state = 1; // if A is held, show information, else go to the main menu
     }
     
