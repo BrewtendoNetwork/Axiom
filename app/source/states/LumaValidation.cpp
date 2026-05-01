@@ -38,22 +38,22 @@ void PlaySFX(const char* path) {
 }
 
 bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
-{	
+{
     kDown |= kHeld; // make kDown have held keys aswell
-
+    
     C2D_SceneBegin(top_screen);
     DrawVersionString();
     
     C2D_SceneBegin(bottom_screen);
-
+    
     // if running on citra, skip all luma checks
     s64 isCitra = 0;
     svcGetSystemInfo(&isCitra, 0x20000, 0);
     if (isCitra) {
         mainStruct->state = 1;
-		return false;
+        return false;
     }
-
+    
     PlaySFX("romfs:/sfx/MES_WARNING.wav");
     // if this is the first time the function has been run, get luma information
     if (mainStruct->firstRunOfState) {
@@ -71,7 +71,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     if (kDown & KEY_A) {
         PlaySFX("romfs:/sfx/BIN_NEXT.wav");
     }
-
+    
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
         C2D_DrawSprite(&mainStruct->blank_info_message);
@@ -92,7 +92,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
             C2D_DrawSprite(&mainStruct->blank_info_message);
             DrawString(0.5f, infoColor, std::format("Enable external FIRMs and modules: {}\n        Enable game patching: {}\n\nFor {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please go to our Discord and open a support forum with an image of the more information screen attached.\nPress A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
         }
-
+        
         // if A is pressed, return true to exit, else if X and Y is pressed
         if (kDown & KEY_A) return true;
         else if (kDown & KEY_X && kDown & KEY_Y) mainStruct->state = 1; // bypass if I need some time to fix it and get it released
