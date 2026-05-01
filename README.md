@@ -1,5 +1,5 @@
 # Axiom
-## Brewtendo account manager for the 3DS
+**Brewtendo account manager for the 3DS**
 
 ## Usage
 
