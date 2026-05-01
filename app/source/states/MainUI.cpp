@@ -296,8 +296,8 @@ void MainUI::drawPrompt(MainStruct* mainStruct)
     const float boxY = (screenH - boxH) / 2.0f;
 
     const u32 fill   = C2D_Color32(0x75, 0x6C, 0x48, 0xFF);
-    const u32 border = C2D_Color32(255, 255, 255, 255);
-    const u32 white  = C2D_Color32(0x75, 0x6C, 0x48, 0xFF);
+    const u32 border = C2D_Color32(108, 98, 64, 255);
+    const u32 white  = C2D_Color32(108, 98, 64, 255);
 
     // Box + border
     C2D_DrawRectSolid(boxX, boxY, 0.2f, boxW, boxH, fill);
@@ -394,12 +394,14 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
             return false;
         }
     }
-
+    // The HOME Menu SFX for when you exit.
+    if (kDown & KEY_START) {
+        loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
+    }
     // if start is pressed, exit to hbl/the home menu depending on if the app was launched from cia or 3dsx
     if (kDown & KEY_START) return true;
     updatePrompt(mainStruct, kDown);
     if (mainStruct->prompt.active) {
-        loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
         if (mainStruct->prompt.result == PromptResult::Yes) {
             switch (mainStruct->prompt.status) {
                 case PromptStatus::BNIDUnlink:
@@ -430,7 +432,6 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
 
     C2D_SceneBegin(bottom_screen);
     C2D_DrawSprite(&mainStruct->bottom);
-    C2D_DrawSprite(&mainStruct->test_message);
     DrawControls();
 
     if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Prod) {
@@ -454,6 +455,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         }
     }
     C2D_DrawSprite(&mainStruct->header);
+    C2D_DrawSprite(&mainStruct->welcome_message);
     drawPrompt(mainStruct);
 
     // Only allow user interaction when the system doesn't need a restart
