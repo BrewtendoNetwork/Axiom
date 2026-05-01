@@ -14,7 +14,7 @@ Result retBNID = 0;
 u32 bnidAccountSlot = 0;
 AccountId bnid = {};
 
-void loadAndPlayBGM(const char* path) {
+void loadAndPlayTESTBGM(const char* path) {
     FILE* f = fopen(path, "rb");
     if (!f) return;
 
@@ -45,7 +45,7 @@ void loadAndPlayBGM(const char* path) {
     ndspChnWaveBufAdd(0, &waveBuf);
 }
 
-void loadAndPlaySFX(const char* path) {
+void loadAndPlayTESTSFX(const char* path) {
     if (ndspChnIsPlaying(1)) return;
 
     FILE* f = fopen(path, "rb");
@@ -192,7 +192,7 @@ void TEST::unlinkBNID(MainStruct *mainStruct) {
         LOG_AXIOM_ERROR(mainStruct, std::format("ACTA_UnbindServerAccount failed with error code {}!", retBNID).c_str());
 	} else {
 		LOG_AXIOM_ERROR(mainStruct, "Successfully unlinked BNID!");
-        loadAndPlaySFX("romfs:/sfx/MES_INFO.wav");
+        loadAndPlayTESTSFX("romfs:/sfx/MES_INFO.wav");
 	}
 }
 
@@ -256,7 +256,7 @@ void TEST::launchPlugin(MainStruct *mainStruct) {
 
     // Logs won't override any previous errors
     LOG_AXIOM_ERROR(mainStruct, "Axiom plugin ready! Launch a game from the Home Menu");
-    loadAndPlaySFX("romfs:/sfx/SFX_PUGIN_START.wav");
+    loadAndPlayTESTSFX("romfs:/sfx/SFX_PUGIN_START.wav");
     return;
 }
 
@@ -335,7 +335,7 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
         // One-time BGM Setup
         if (!mainStruct->musicStarted) {
             // Load and play BGM
-            loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
+            loadAndPlayTESTBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
             mainStruct->musicStarted = true;
         }
     
@@ -387,7 +387,7 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
 
             // Logs won't override any previous errors
             LOG_AXIOM_ERROR(mainStruct, "Axiom has been updated!");
-            loadAndPlaySFX("romfs:/sfx/MES_INFO.wav");
+            loadAndPlayTESTSFX("romfs:/sfx/MES_INFO.wav");
             aptSetHomeAllowed(false);
             mainStruct->needsReboot = true;
             mainStruct->buttonWasPressed = false;
@@ -396,7 +396,7 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
     }
     // The HOME Menu SFX for when you exit.
     if (kDown & KEY_START) {
-        loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
+        loadAndPlayTESTSFX("romfs:/sfx/HOME_OPEN.wav");
     }
     // if start is pressed, exit to hbl/the home menu depending on if the app was launched from cia or 3dsx
     if (kDown & KEY_START) return true;
@@ -464,17 +464,17 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
             if ((touch.px >= 165 && touch.px <= 165 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
                 mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Prod;
                 mainStruct->buttonWasPressed = true;
-                loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
+                loadAndPlayTESTSFX("romfs:/sfx/ACC_TAP.wav");
             }
             else if ((touch.px >= 49 && touch.px <= 49 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
                 mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Dev;
                 mainStruct->buttonWasPressed = true;
-                loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
+                loadAndPlayTESTSFX("romfs:/sfx/ACC_TAP.wav");
             }
         }
         else if (kDown & KEY_LEFT || kDown & KEY_RIGHT) {
             mainStruct->buttonSelected = mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Dev ? NascEnvironment::NASC_ENV_Prod : NascEnvironment::NASC_ENV_Dev;
-            loadAndPlaySFX("romfs:/sfx/ACC_SELECT.wav");
+            loadAndPlayTESTSFX("romfs:/sfx/ACC_SELECT.wav");
         }
 
         if (mainStruct->prompt.active) {
@@ -482,7 +482,7 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
         }
 
         if (kDown & KEY_A) {
-            loadAndPlaySFX("romfs:/sfx/ACC_START.wav");
+            loadAndPlayTESTSFX("romfs:/sfx/ACC_START.wav");
             mainStruct->buttonWasPressed = true;
         }
 
@@ -496,13 +496,13 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
 
             if (bnidAccountSlot == 0) {
                 LOG_AXIOM_ERROR(mainStruct, "There is no BNID linked on this console!");
-                loadAndPlaySFX("romfs:/sfx/MES_WARNING.wav");
+                loadAndPlayTESTSFX("romfs:/sfx/MES_WARNING.wav");
             }
 
 	        if (R_SUCCEEDED(retBNID)) {
 		        if (R_FAILED(retBNID = ACT_GetAccountInfo(bnid, sizeof(bnid), bnidAccountSlot, INFO_TYPE_ACCOUNT_ID))) {
 			        LOG_AXIOM_ERROR(mainStruct, std::format("ACT_GetAccountInfo failed with error code {}!", retBNID).c_str());
-                    loadAndPlaySFX("romfs:/sfx/MES_WARNING.wav");
+                    loadAndPlayTESTSFX("romfs:/sfx/MES_WARNING.wav");
 		        }
 	        }
 
@@ -511,7 +511,7 @@ bool TEST::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Rend
 			        openPrompt(mainStruct, std::format("Are you sure you would like to unlink your BNID {}? Your BNID can be relinked at any time.", bnid), PromptStatus::BNIDUnlink);
 		        } else {
 			        LOG_AXIOM_ERROR(mainStruct, "There is no BNID linked on this console!");
-                    loadAndPlaySFX("romfs:/sfx/MES_WARNING.wav");
+                    loadAndPlayTESTSFX("romfs:/sfx/MES_WARNING.wav");
 		        }
 	        }
         }

@@ -1,6 +1,37 @@
 #include "LumaValidation.hpp"
 #include <format>
 
+void PlayBGM(const char* path) {
+    FILE* f = fopen(path, "rb");
+    if (!f) return;
+
+    fseek(f, 0, SEEK_END);
+    u32 size = ftell(f);
+    
+    // Skip the 44-byte WAV header
+    u32 dataSize = size - 44;
+    fseek(f, 44, SEEK_SET);
+
+    // Allocate Linear Memory
+    u8* buffer = (u8*)linearAlloc(dataSize);
+    fread(buffer, 1, dataSize, f);
+    fclose(f);
+
+    static ndspWaveBuf waveBuf;
+    memset(&waveBuf, 0, sizeof(ndspWaveBuf));
+    waveBuf.data_vaddr = buffer;
+    waveBuf.nsamples = dataSize / 4;
+    waveBuf.looping = true;
+    waveBuf.status = NDSP_WBUF_FREE;
+
+    DSP_FlushDataCache(buffer, dataSize);
+    
+    ndspChnSetRate(0, 16000.0f);
+    ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
+
+    ndspChnWaveBufAdd(0, &waveBuf);
+}
+
 void PlaySFX(const char* path) {
     if (ndspChnIsPlaying(1)) return;
 
@@ -40,6 +71,13 @@ void PlaySFX(const char* path) {
 bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
     PlaySFX("romfs:/sfx/BIN_FALSE.wav");
+    
+    if (!mainStruct->musicStarted) {
+        // Load and play BGM
+        loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
+        mainStruct->musicStarted = true;
+    }
+    
     kDown |= kHeld; // make kDown have held keys aswell
     
     C2D_SceneBegin(top_screen);
