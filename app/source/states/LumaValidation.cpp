@@ -39,6 +39,7 @@ void PlaySFX(const char* path) {
 
 bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
+    PlaySFX("romfs:/sfx/BIN_FALSE.wav");
     kDown |= kHeld; // make kDown have held keys aswell
     
     C2D_SceneBegin(top_screen);
@@ -80,14 +81,12 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
         // if A is pressed, return true to exit
         if (kDown & KEY_A) return true;
     }
-    
     // else if either external firms and modules or game patching is not enabled, send another error and draw luma info if b is pressed
-    else if (!mainStruct->externalFirmsAndModulesEnabled || !mainStruct->gamePatchingEnabled) {
+    else if (!mainStruct->externalFirmsAndModulesEnabled || !mainStruct->gamePatchingEnabled)
         if (kDown & KEY_B) {
             PlaySFX("romfs:/sfx/BIN_TRUE.wav");
             drawLumaInfo(mainStruct);
         }
-        PlaySFX("romfs:/sfx/BIN_FALSE.wav");
         else {
             C2D_DrawSprite(&mainStruct->blank_info_message);
             DrawString(0.5f, infoColor, std::format("Enable external FIRMs and modules: {}\nEnable game patching: {}\n\nFor {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\nIf you are sure both options are enabled and the options shown don't match your Luma3DS settings, please go to our Discord and open a support forum with an image of the more information screen attached.\nPress A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
