@@ -71,9 +71,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     if (kDown & KEY_A) {
         PlaySFX("romfs:/sfx/BIN_NEXT.wav");
     }
-    if (kUp & KEY_B) {
-        PlaySFX("romfs:/sfx/BIN_FALSE.wav");
-    }
 
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
@@ -90,6 +87,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
             PlaySFX("romfs:/sfx/BIN_TRUE.wav");
             drawLumaInfo(mainStruct);
         }
+        PlaySFX("romfs:/sfx/BIN_FALSE.wav");
         else {
             C2D_DrawSprite(&mainStruct->blank_info_message);
             DrawString(0.5f, infoColor, std::format("        Enable external FIRMs and modules: {}\n        Enable game patching: {}\n\n        For {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\        If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please go to our Discord and open a support forum with an image of the more information screen attached.\n        Press A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
