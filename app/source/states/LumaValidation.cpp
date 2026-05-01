@@ -96,7 +96,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
         // if A is pressed, return true to exit, else if X and Y is pressed
         if (kDown & KEY_A) return true;
         else if (kDown & KEY_X && kDown & KEY_Y) mainStruct->state = 1; // bypass if I need some time to fix it and get it released
-    }
     else {
         if (kDown & KEY_A) drawLumaInfo(mainStruct);
         else mainStruct->state = 1; // if A is held, show information, else go to the main menu
