@@ -47,14 +47,14 @@ RSF_FILE := meta/axiom-cia.rsf
 
 ICON      := meta/icon.png
 BNR_IMAGE := meta/banner.png
-BNR_AUDIO := meta/audio.cwav
+BNR_AUDIO := meta/audio(OLD).wav
 LOGO 	  := meta/logoTEST.bin
 
 VERSION_HEADER = version.hpp
 
 VERSION_MAJOR := 0
 VERSION_MINOR := 9
-VERSION_MICRO := 3
+VERSION_MICRO := 4
 
 #GFXBUILD	:=	$(ROMFS)/gfx
 
