@@ -12,7 +12,7 @@
 | SpotPass | Unavailable |
 | BNID | Signing in works unlinking does not |
 | Miiverse | Works |
-| Friend List | Unavailable |
+| Friend List | Won't ever be supported |
 | Axiom (Proxyless patcher) | Works, but still is buggy |
 | Games | Unavailable |
 | Theme Shop | Unavailable |
