@@ -1,6 +1,42 @@
 #include "LumaValidation.hpp"
 #include <format>
 
+void PlaySFX(const char* path) {
+    if (ndspChnIsPlaying(1)) return;
+
+    FILE* f = fopen(path, "rb");
+    if (!f) return;
+
+    fseek(f, 0, SEEK_END);
+    u32 size = ftell(f);
+    u32 dataSize = size - 44;
+    fseek(f, 44, SEEK_SET);
+
+    static u8* buffer = nullptr;
+    static ndspWaveBuf waveBuf;
+
+    if (buffer) {
+        linearFree(buffer);
+        buffer = nullptr;
+    }
+
+    buffer = (u8*)linearAlloc(dataSize);
+    if (!buffer) { fclose(f); return; }
+    fread(buffer, 1, dataSize, f);
+    fclose(f);
+
+    memset(&waveBuf, 0, sizeof(ndspWaveBuf));
+    waveBuf.data_vaddr = buffer;
+    waveBuf.nsamples = dataSize / 2;
+    waveBuf.looping = false;
+
+    DSP_FlushDataCache(buffer, dataSize);
+
+    ndspChnSetRate(1, 16000.0f);
+    ndspChnSetFormat(1, NDSP_FORMAT_MONO_PCM16);
+    ndspChnWaveBufAdd(1, &waveBuf);
+}
+
 bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch) 
 {	
     kDown |= kHeld; // make kDown have held keys aswell
@@ -33,13 +69,13 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     }
     
     if (kDown & KEY_A) {
-        loadAndPlaySFX("romfs:/sfx/BIN_NEXT.wav");
+        PlaySFX("romfs:/sfx/BIN_NEXT.wav");
     }
 
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
         C2D_DrawSprite(&mainStruct->blank_info_message);
-        loadAndPlaySFX("romfs:/sfx/MES_WARNING.wav");
+        PlaySFX("romfs:/sfx/MES_WARNING.wav");
         DrawString(0.5f, infoColor, std::format("Your Luma3DS version is out of date, it should be Luma3DS {} or newer for {} to function. Press A to exit.", targetLumaVersion, APP_TITLE), 0);
         
         // if A is pressed, return true to exit
