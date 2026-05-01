@@ -167,7 +167,7 @@ int main()
 		if (exit) break;
 	}
     
-    PlaySFX("romfs:/sfx/HOME_OPEN.wav");
+    SFX("romfs:/sfx/HOME_OPEN.wav");
     
 	// Deinitialize the libs
 	C2D_Fini();
