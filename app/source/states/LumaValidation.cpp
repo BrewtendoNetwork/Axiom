@@ -74,7 +74,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     
     if (!mainStruct->musicStarted) {
         // Load and play BGM
-        loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
+        PlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
         mainStruct->musicStarted = true;
     }
     
