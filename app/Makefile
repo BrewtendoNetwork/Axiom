@@ -47,7 +47,7 @@ RSF_FILE := meta/axiom-cia.rsf
 
 ICON      := meta/icon.png
 BNR_IMAGE := meta/banner.png
-BNR_AUDIO := meta/audio(OLD).wav
+BNR_AUDIO := meta/audio.wav
 LOGO 	  := meta/logoTEST.bin
 
 VERSION_HEADER = version.hpp
