@@ -90,7 +90,7 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
         PlaySFX("romfs:/sfx/BIN_FALSE.wav");
         else {
             C2D_DrawSprite(&mainStruct->blank_info_message);
-            DrawString(0.5f, infoColor, std::format("Enable external FIRMs and modules: {}\n        Enable game patching: {}\n\nFor {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please go to our Discord and open a support forum with an image of the more information screen attached.\nPress A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
+            DrawString(0.5f, infoColor, std::format("Enable external FIRMs and modules: {}\nEnable game patching: {}\n\nFor {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please go to our Discord and open a support forum with an image of the more information screen attached.\nPress A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
         }
         
         // if A is pressed, return true to exit, else if X and Y is pressed
