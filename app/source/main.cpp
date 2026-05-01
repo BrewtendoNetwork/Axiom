@@ -114,7 +114,7 @@ int main()
 			exit = LumaValidation::checkIfLumaOptionsEnabled(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);
 		} else {
             
-            if (mainStruct.welcome == 1) {
+            if (mainStruct.welcome == 0) {
                 exit = TEST::drawUI(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);
             } else {
                 exit = MainUI::drawUI(&mainStruct, top_screen, bottom_screen, kDown, kHeld, touch);

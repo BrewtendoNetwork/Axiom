@@ -70,20 +70,19 @@ void PlaySFX(const char* path) {
 
 bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
-    PlaySFX("romfs:/sfx/BIN_FALSE.wav");
-    
-    if (!mainStruct->musicStarted) {
-        // Load and play BGM
-        PlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
-        mainStruct->musicStarted = true;
-    }
-    
     kDown |= kHeld; // make kDown have held keys aswell
     
     C2D_SceneBegin(top_screen);
     DrawVersionString();
+    C2D_DrawSprite(&mainStruct->top);
     
     C2D_SceneBegin(bottom_screen);
+    
+    if (!mainStruct->musicStarted) {
+        // Load and play BGM
+        PlayBGM("romfs:/bgm/AXIOM_SETUP_BGM.wav");
+        mainStruct->musicStarted = true;
+    }
     
     // if running on citra, skip all luma checks
     s64 isCitra = 0;
@@ -107,16 +106,16 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
         mainStruct->gamePatchingEnabled = GetLumaOptionByIndex(LumaConfigBitIndex::GamePatching, mainStruct->lumaOptions); // and this might need multiple updates due to the fact that they fluctuate occasionally, if need be i can make a function that handles multiple versions though
     }
     
-    if (kDown & KEY_A) {
-        PlaySFX("romfs:/sfx/BIN_NEXT.wav");
-    }
-    
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
         C2D_DrawSprite(&mainStruct->blank_info_message);
         DrawString(0.5f, infoColor, std::format("Your Luma3DS version is out of date, it should be Luma3DS {} or newer for {} to function. Press A to exit.", targetLumaVersion, APP_TITLE), 0);
         
         // if A is pressed, return true to exit
+        if (kDown & KEY_A) {
+            PlaySFX("romfs:/sfx/BIN_NEXT.wav");
+        }
+        
         if (kDown & KEY_A) return true;
     }
     // else if either external firms and modules or game patching is not enabled, send another error and draw luma info if b is pressed
@@ -139,4 +138,5 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
     }
     
     return false;
+    
 }
