@@ -15,6 +15,7 @@
 | Friend List | Unavailable |
 | Axiom (Proxyless patcher) | Works, but still is buggy |
 | Games | Unavailable |
+| Theme Shop | Unavailable |
 
 # NO ETA! 
 Yet...
