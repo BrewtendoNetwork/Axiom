@@ -3,10 +3,9 @@
 
 ## Progress
 
-| First Header  | Second Header |
+| Nintendo 3DS eShop  | Badge Arcade |
 | ------------- | ------------- |
 | Content Cell  | Content Cell  |
 | Content Cell  | Content Cell  |
-Not out yet...
 
 # NO ETA!
