@@ -397,10 +397,9 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
 
     // if start is pressed, exit to hbl/the home menu depending on if the app was launched from cia or 3dsx
     if (kDown & KEY_START) return true;
-    loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
     updatePrompt(mainStruct, kDown);
-
     if (mainStruct->prompt.active) {
+        loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
         if (mainStruct->prompt.result == PromptResult::Yes) {
             switch (mainStruct->prompt.status) {
                 case PromptStatus::BNIDUnlink:
