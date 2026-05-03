@@ -73,6 +73,7 @@ struct MainStruct {
 	u32 screen = 0;
 	u32 state = 0;
 	u32 lastState = 0;
+    u32 welcome = 1;
 
 	NascEnvironment currentAccount = NascEnvironment::NASC_ENV_Prod;
 	NascEnvironment buttonSelected = NascEnvironment::NASC_ENV_Prod;

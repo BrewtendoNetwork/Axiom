@@ -65,6 +65,7 @@ void DrawControls() {
 	C2D_TextOptimize(&c2d_text);
 
 	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset - GetStringHeight(size, text), 0.5f, size, size, C2D_Color32(108, 98, 64, 255));
+    //TEMP C2D_DrawSprite(&mainStruct->welcome_message);
 
 }
 
