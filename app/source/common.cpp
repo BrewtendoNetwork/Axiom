@@ -54,7 +54,7 @@ void DrawString(float size, u32 color, std::string text, int flags) {
 
 void DrawControls() {
 	C2D_Text c2d_text;
-	const char* text = "A: Select\nY: Launch plugin\nX: Unlink BNID\nSTART: Exit";
+	const char* text = "A: Select\nY: Launch plugin\nX: Unlink BNID";
 	float size = 0.5f;
 	int offset = 6;
 	int bottomOffset = 240 - offset - (int)GetStringHeight(size, text);

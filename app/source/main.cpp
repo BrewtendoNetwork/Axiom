@@ -63,9 +63,6 @@ static void sceneInit(void)
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_unloaded_selected, spriteSheet, sheet_brewtendo_unloaded_selected_idx);
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_loaded_selected, spriteSheet, sheet_brewtendo_loaded_selected_idx);
 	C2D_SpriteFromSheet(&mainStruct.brewtendo_loaded_deselected, spriteSheet, sheet_brewtendo_loaded_deselected_idx);
-    // Messages
-    C2D_SpriteFromSheet(&mainStruct.welcome_message, spriteSheet, sheet_welcome_message_idx);
-    C2D_SpriteFromSheet(&mainStruct.blank_info_message, spriteSheet, sheet_blank_info_message_idx);
     
     C2D_SpriteSetCenter(&mainStruct.top, 0.5f, 0.5f);
     C2D_SpriteSetPos(&mainStruct.top, 200, 120);
@@ -82,11 +79,6 @@ static void sceneInit(void)
     C2D_SpriteSetPos(&mainStruct.nintendo_loaded_deselected, 165, 59);
     C2D_SpriteSetCenter(&mainStruct.bottom, 0.5f, 0.5f);
     C2D_SpriteSetPos(&mainStruct.bottom, 160, 120);
-    // Messages
-    C2D_SpriteSetCenter(&mainStruct.welcome_message, 0.5f, 0.5f);
-    C2D_SpriteSetPos(&mainStruct.welcome_message, 160, 120);
-    C2D_SpriteSetCenter(&mainStruct.blank_info_message, 0.5f, 0.5f);
-    C2D_SpriteSetPos(&mainStruct.blank_info_message, 160, 120);
     
 	textBuf = C2D_TextBufNew(4096); // initialize the text buffer with a max glyph count of 4096
 }
