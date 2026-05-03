@@ -455,7 +455,6 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         }
     }
     C2D_DrawSprite(&mainStruct->header);
-    C2D_DrawSprite(&mainStruct->welcome_message);
     drawPrompt(mainStruct);
 
     // Only allow user interaction when the system doesn't need a restart

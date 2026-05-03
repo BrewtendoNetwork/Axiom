@@ -69,8 +69,6 @@ struct MainStruct {
 	C2D_Sprite brewtendo_loaded_deselected;
 	C2D_Sprite top;
     C2D_Sprite bottom;
-	C2D_Sprite welcome_message;
-    C2D_Sprite blank_info_message;
 
 	u32 screen = 0;
 	u32 state = 0;

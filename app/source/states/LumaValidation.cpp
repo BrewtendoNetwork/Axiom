@@ -74,7 +74,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
 
     // if the major version of luma3ds is under the targetLumaVersion (defined earlier in the file), send an error
     if (std::get<0>(mainStruct->lumaVersion) < targetLumaVersion) {
-        C2D_DrawSprite(&mainStruct->blank_info_message);
         PlaySFX("romfs:/sfx/MES_WARNING.wav");
         DrawString(0.5f, infoColor, std::format("Your Luma3DS version is out of date, it should be Luma3DS {} or newer for {} to function. Press A to exit.", targetLumaVersion, APP_TITLE), 0);
         
@@ -88,7 +87,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(MainStruct *mainStruct, C3D_Rende
             drawLumaInfo(mainStruct);
         }
         else {
-            C2D_DrawSprite(&mainStruct->blank_info_message);
             PlaySFX("romfs:/sfx/MES_WARNING.wav");
             DrawString(0.5f, infoColor, std::format("Enable external FIRMs and modules: {}\nEnable game patching: {}\n\nFor {} to work, both of these Luma3DS options should be ENABLED. To open Luma3DS settings, hold SELECT while booting your system.\n\n\
 If you are sure both options are enabled and the options shown don't match your Luma3DS settings, please open a support thread on our forum with an image of the more information screen attached.\nPress A to exit, or hold B for more information.", mainStruct->externalFirmsAndModulesEnabled, mainStruct->gamePatchingEnabled, APP_TITLE), 0);
