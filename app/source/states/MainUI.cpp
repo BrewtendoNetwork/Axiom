@@ -297,7 +297,7 @@ void MainUI::drawPrompt(MainStruct* mainStruct)
 
     const u32 fill   = C2D_Color32(0x75, 0x6C, 0x48, 0xFF);
     const u32 border = C2D_Color32(108, 98, 64, 255);
-    const u32 white  = C2D_Color32(108, 98, 64, 255);
+    const u32 white  = C2D_Color32(255, 255, 255, 255);
 
     // Box + border
     C2D_DrawRectSolid(boxX, boxY, 0.2f, boxW, boxH, fill);
@@ -459,14 +459,14 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
 
     // Only allow user interaction when the system doesn't need a restart
     if (!mainStruct->needsReboot && !mainStruct->prompt.active) {
-        // handle touch input
+        // handle touch input - left button (Dev) at x:49-153, right button (Prod) at x:165-269, both at y:59-172
         if (kDown & KEY_TOUCH) {
-            if ((touch.px >= 165 && touch.px <= 165 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
+            if ((touch.px >= 165 && touch.px <= 269) && (touch.py >= 59 && touch.py <= 172)) {
                 mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Prod;
                 mainStruct->buttonWasPressed = true;
                 loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
             }
-            else if ((touch.px >= 49 && touch.px <= 49 + 104) && (touch.py >= 59 && touch.py <= 59 + 113)) {
+            else if ((touch.px >= 49 && touch.px <= 153) && (touch.py >= 59 && touch.py <= 172)) {
                 mainStruct->buttonSelected = NascEnvironment::NASC_ENV_Dev;
                 mainStruct->buttonWasPressed = true;
                 loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");

@@ -17,6 +17,7 @@
 #include <CTRPluginFramework.hpp>
 #include "common.hpp"
 #include "patches.hpp"
+#include "HTTPSessionManager.hpp"
 #include "PatternManager.hpp"
 #include "rt.h"
 
@@ -111,5 +112,13 @@ namespace CTRPluginFramework
     void finiPatches() {
         disablePatches();
         acnlGameServerIDAddrs.clear();
+    }
+
+    // Miiverse HTTP session management - resets stale sessions
+    void miiversePostCompletionHook() {
+        updateMiiverseSessionActivity();
+        if (!validateMiiverseSession()) {
+            resetMiiverseSession();
+        }
     }
 }

@@ -72,7 +72,21 @@ namespace CTRPluginFramework
 
                 std::string playerName;
                 if (identificationInfo != nullptr && identificationInfo->m_playerName.m_length > 0) {
-                    Utils::ConvertUTF16ToUTF8(playerName, identificationInfo->m_playerName.m_name);
+                    // Simple UTF16 to UTF8 conversion for player names
+                    const char16_t* utf16 = identificationInfo->m_playerName.m_name;
+                    for (size_t j = 0; j < identificationInfo->m_playerName.m_length && utf16[j] != 0; ++j) {
+                        char16_t ch = utf16[j];
+                        if (ch < 0x80) {
+                            playerName += static_cast<char>(ch);
+                        } else if (ch < 0x800) {
+                            playerName += static_cast<char>(0xC0 | (ch >> 6));
+                            playerName += static_cast<char>(0x80 | (ch & 0x3F));
+                        } else {
+                            playerName += static_cast<char>(0xE0 | (ch >> 12));
+                            playerName += static_cast<char>(0x80 | ((ch >> 6) & 0x3F));
+                            playerName += static_cast<char>(0x80 | (ch & 0x3F));
+                        }
+                    }
                     playerName = Utils::Format("\"%s\"", playerName.c_str());
                 }
 

@@ -7,6 +7,7 @@
 #include "OSDManager.hpp"
 #include "patches.hpp"
 #include "PIALogger.hpp"
+#include "HTTPSessionManager.hpp"
 #include "rt.h"
 
 #include <vector>
@@ -36,6 +37,7 @@ namespace CTRPluginFramework
         pm.Perform();
 
         enablePatches();
+        initHTTPSessions();
     }
 
     bool onHokakuCTROptionsFolderAction(MenuFolder& folder, ActionType type) {
@@ -155,6 +157,7 @@ namespace CTRPluginFramework
 
         menu->Run();
 
+        finiHTTPSessions();
         finiHokakuCTR();
         finiPatches();
 
