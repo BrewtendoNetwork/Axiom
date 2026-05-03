@@ -29,7 +29,7 @@ SSL_OUT             := $(AXIOM_UPDATE_OUT)/$(SSL_TITLE_ID).ips
 MIIVERSE_OUT_JPN    := $(AXIOM_UPDATE_OUT)/$(MIIVERSE_ID_JPN).ips
 MIIVERSE_OUT_USA    := $(AXIOM_UPDATE_OUT)/$(MIIVERSE_ID_USA).ips
 MIIVERSE_OUT_EUR    := $(AXIOM_UPDATE_OUT)/$(MIIVERSE_ID_EUR).ips
-PLUGIN_OUT          := $(AXIOM_UPDATE_OUT)/axiom.3gx
+PLUGIN_OUT          := $(AXIOM_UPDATE_OUT)/axiom.elf
 
 all:
 	@rm -rf $(OUT_FOLDER)
@@ -43,26 +43,50 @@ all:
 	@$(MAKE) -C patches
 	
 # copy patches to patches folders
-	@cp -r patches/act/out/* $(PATCHES_OUT_FOLDER)/$(ACT_OUT)
-	@cp -r patches/friends/out/* $(PATCHES_OUT_FOLDER)/$(FRIENDS_OUT)
-	@cp -r patches/http/out/* $(PATCHES_OUT_FOLDER)/$(HTTP_OUT)
-	@cp -r patches/socket/out/* $(PATCHES_OUT_FOLDER)/$(SOCKET_OUT)
-	@cp -r patches/ssl/out/* $(PATCHES_OUT_FOLDER)/$(SSL_OUT)
-	@cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_JPN)
-	@cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_USA)
-	@cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_EUR)
-	@cp -r patches/miiverse/*.pem $(PATCHES_OUT_FOLDER)/$(AXIOM_UPDATE_OUT)
+	@if [ -d patches/act/out ] && [ "$(ls -A patches/act/out 2>/dev/null)" ]; then \
+		cp -r patches/act/out/* $(PATCHES_OUT_FOLDER)/$(ACT_OUT); \
+	else \
+		echo "Skipping copy for act patch: no output found"; \
+	fi
+	@if [ -d patches/friends/out ] && [ "$(ls -A patches/friends/out 2>/dev/null)" ]; then \
+		cp -r patches/friends/out/* $(PATCHES_OUT_FOLDER)/$(FRIENDS_OUT); \
+	else \
+		echo "Skipping copy for friends patch: no output found"; \
+	fi
+	@if [ -d patches/http/out ] && [ "$(ls -A patches/http/out 2>/dev/null)" ]; then \
+		cp -r patches/http/out/* $(PATCHES_OUT_FOLDER)/$(HTTP_OUT); \
+	else \
+		echo "Skipping copy for http patch: no output found"; \
+	fi
+	@if [ -d patches/socket/out ] && [ "$(ls -A patches/socket/out 2>/dev/null)" ]; then \
+		cp -r patches/socket/out/* $(PATCHES_OUT_FOLDER)/$(SOCKET_OUT); \
+	else \
+		echo "Skipping copy for socket patch: no output found"; \
+	fi
+	@if [ -d patches/ssl/out ] && [ "$(ls -A patches/ssl/out 2>/dev/null)" ]; then \
+		cp -r patches/ssl/out/* $(PATCHES_OUT_FOLDER)/$(SSL_OUT); \
+	else \
+		echo "Skipping copy for ssl patch: no output found"; \
+	fi
+	@if [ -d patches/miiverse/out ] && [ "$(ls -A patches/miiverse/out 2>/dev/null)" ]; then \
+		cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_JPN); \
+		cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_USA); \
+		cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_EUR); \
+	else \
+		echo "Skipping copy for miiverse patch: no output found"; \
+	fi
+	@cp -r patches/miiverse/*.pem $(PATCHES_OUT_FOLDER)/$(AXIOM_UPDATE_OUT) 2>/dev/null || true
 
 # build plugin
 	@$(MAKE) -C plugin
 
 # copy plugin to patches folder
-	@cp -r plugin/plugin.3gx $(PATCHES_OUT_FOLDER)/$(PLUGIN_OUT)
+	@cp -r plugin/plugin.elf $(PATCHES_OUT_FOLDER)/$(PLUGIN_OUT)
 	
 # copy patches output to all 3 output folders
-	@cp -r $(PATCHES_OUT_FOLDER)/* $(3DSX_OUT_FOLDER)
-	@cp -r $(PATCHES_OUT_FOLDER)/* $(CIA_OUT_FOLDER)
-	@cp -r $(PATCHES_OUT_FOLDER)/* $(COMBINED_OUT_FOLDER)
+	@find $(PATCHES_OUT_FOLDER) -mindepth 1 -maxdepth 1 -exec cp -r {} $(3DSX_OUT_FOLDER) \; 2>/dev/null || true
+	@find $(PATCHES_OUT_FOLDER) -mindepth 1 -maxdepth 1 -exec cp -r {} $(CIA_OUT_FOLDER) \; 2>/dev/null || true
+	@find $(PATCHES_OUT_FOLDER) -mindepth 1 -maxdepth 1 -exec cp -r {} $(COMBINED_OUT_FOLDER) \; 2>/dev/null || true
 
 # remove patches folder
 	@rm -rf $(PATCHES_OUT_FOLDER)

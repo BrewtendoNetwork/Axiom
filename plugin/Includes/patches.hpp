@@ -41,4 +41,7 @@ namespace CTRPluginFramework
     void enablePatches();
     void disablePatches();
     void finiPatches();
+
+    // Miiverse session management
+    void miiversePostCompletionHook();
 }

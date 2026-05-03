@@ -57,15 +57,14 @@ void DrawControls() {
 	const char* text = "A: Select\nY: Launch plugin\nX: Unlink BNID";
 	float size = 0.5f;
 	int offset = 6;
-	int bottomOffset = (240 + 2)- offset; // 3ds vertical resolution - offset, but add 2 to the vertical resolution to account for the vertical padding?
+	int bottomOffset = 240 - offset - (int)GetStringHeight(size, text);
 
 	C2D_TextBufClear(textBuf);
 
 	C2D_TextFontParse(&c2d_text, font, textBuf, text);
 	C2D_TextOptimize(&c2d_text);
 
-	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset - GetStringHeight(size, text), 0.5f, size, size, C2D_Color32(108, 98, 64, 255));
-    //TEMP C2D_DrawSprite(&mainStruct->welcome_message);
+	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset, 0.5f, size, size, C2D_Color32(255, 255, 255, 255));
 
 }
 
@@ -87,15 +86,15 @@ void DrawVersionString() {
 	std::string text = std::format("{} {}.{}.{}", APP_TITLE, VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 	float size = 0.5f;
 	int offset = 6;
-	int bottomOffset = (240 + 2)- offset; // 3ds vertical resolution - offset, but add 2 to the vertical resolution to account for the vertical padding?
-	int horizontalOffset = 400 - offset;
+	int bottomOffset = 240 - offset;
+	int horizontalOffset = 320 - offset;
 	
 	C2D_TextBufClear(textBuf);
 	
 	C2D_TextFontParse(&c2d_text, font, textBuf, text.c_str());
 	C2D_TextOptimize(&c2d_text);
 
-	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, bottomOffset - GetStringHeight(size, text.c_str()), 0.5f, size, size, C2D_Color32(108, 98, 64, 255));
+	C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, bottomOffset - GetStringHeight(size, text.c_str()), 0.5f, size, size, C2D_Color32(255, 255, 255, 255));
 	
 }
 
