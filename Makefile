@@ -43,32 +43,32 @@ all:
 	@$(MAKE) -C patches
 	
 # copy patches to patches folders
-	@if [ -d patches/act/out ] && [ "$(ls -A patches/act/out 2>/dev/null)" ]; then \
+	@if [ -f patches/act/out/code.ips ]; then \
 		cp -r patches/act/out/* $(PATCHES_OUT_FOLDER)/$(ACT_OUT); \
 	else \
 		echo "Skipping copy for act patch: no output found"; \
 	fi
-	@if [ -d patches/friends/out ] && [ "$(ls -A patches/friends/out 2>/dev/null)" ]; then \
+	@if [ -f patches/friends/out/code.ips ]; then \
 		cp -r patches/friends/out/* $(PATCHES_OUT_FOLDER)/$(FRIENDS_OUT); \
 	else \
 		echo "Skipping copy for friends patch: no output found"; \
 	fi
-	@if [ -d patches/http/out ] && [ "$(ls -A patches/http/out 2>/dev/null)" ]; then \
+	@if [ -f patches/http/out/code.ips ]; then \
 		cp -r patches/http/out/* $(PATCHES_OUT_FOLDER)/$(HTTP_OUT); \
 	else \
 		echo "Skipping copy for http patch: no output found"; \
 	fi
-	@if [ -d patches/socket/out ] && [ "$(ls -A patches/socket/out 2>/dev/null)" ]; then \
+	@if [ -f patches/socket/out/code.ips ]; then \
 		cp -r patches/socket/out/* $(PATCHES_OUT_FOLDER)/$(SOCKET_OUT); \
 	else \
 		echo "Skipping copy for socket patch: no output found"; \
 	fi
-	@if [ -d patches/ssl/out ] && [ "$(ls -A patches/ssl/out 2>/dev/null)" ]; then \
+	@if [ -f patches/ssl/out/code.ips ]; then \
 		cp -r patches/ssl/out/* $(PATCHES_OUT_FOLDER)/$(SSL_OUT); \
 	else \
 		echo "Skipping copy for ssl patch: no output found"; \
 	fi
-	@if [ -d patches/miiverse/out ] && [ "$(ls -A patches/miiverse/out 2>/dev/null)" ]; then \
+	@if [ -f patches/miiverse/out/code.ips ]; then \
 		cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_JPN); \
 		cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_USA); \
 		cp -r patches/miiverse/out/* $(PATCHES_OUT_FOLDER)/$(MIIVERSE_OUT_EUR); \
