@@ -427,7 +427,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
     C2D_DrawSprite(&mainStruct->top);
 
     if (mainStruct->errorString[0] != 0) {
-        DrawString(0.5f, 0xFF756C48, std::format("{}{}", mainStruct->errorString, mainStruct->needsReboot ? "\n\nPress START to reboot the system" : ""), 0);
+        DrawString(0.5f, 0xFF000000, std::format("{}{}", mainStruct->errorString, mainStruct->needsReboot ? "\n\nPress START to reboot the system" : ""), 0);
     }
 
     C2D_SceneBegin(bottom_screen);
@@ -438,21 +438,28 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Prod) {
             C2D_DrawSprite(&mainStruct->nintendo_loaded_selected);
             C2D_DrawSprite(&mainStruct->brewtendo_unloaded_deselected);
-        }
-        else {
+        } else if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Dev) {
             C2D_DrawSprite(&mainStruct->nintendo_unloaded_selected);
             C2D_DrawSprite(&mainStruct->brewtendo_loaded_deselected);
+        } else {
+          C2D_DrawSprite(&mainStruct->nintendo_unloaded_selected);
+          C2D_DrawSprite(&mainStruct->brewtendo_unloaded_deselected);
         }
     }
     else if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Dev) {
         if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Dev) {
             C2D_DrawSprite(&mainStruct->nintendo_unloaded_deselected);
             C2D_DrawSprite(&mainStruct->brewtendo_loaded_selected);
-        }
-        else {
+        } else if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Prod) {
             C2D_DrawSprite(&mainStruct->nintendo_loaded_deselected);
             C2D_DrawSprite(&mainStruct->brewtendo_unloaded_selected);
+        } else {
+            C2D_DrawSprite(&mainStruct->nintendo_unloaded_deselected);
+            C2D_DrawSprite(&mainStruct->brewtendo_unloaded_selected);
         }
+    } else {
+        C2D_DrawSprite(&mainStruct->nintendo_unloaded_deselected);
+        C2D_DrawSprite(&mainStruct->brewtendo_unloaded_deselected);
     }
     C2D_DrawSprite(&mainStruct->header);
     drawPrompt(mainStruct);
@@ -489,7 +496,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen, C3D_Re
         if (kDown & KEY_X) {
             // We need to confirm we actually even have a linked BNID.
 	        if (R_SUCCEEDED(retBNID)) {
-		        if (R_FAILED(retBNID = ACT_GetAccountIndexOfFriendAccountId(&bnidAccountSlot, 2))) {
+		        if (R_FAILED(retBNID = ACT_GetAccountIndexOfFriendAccountId(&bnidAccountSlot, 3))) {
 			        LOG_AXIOM_ERROR(mainStruct, std::format("ACT_GetAccountIndexOfFriendAccountId failed with error code {}!", retBNID).c_str());
 		        }
 	        }

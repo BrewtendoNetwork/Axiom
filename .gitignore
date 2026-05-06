@@ -57,3 +57,5 @@ target
 patches/ssl
 *.sb3
 audacity files/AXIOM_BGM.aup3
+
+.vs

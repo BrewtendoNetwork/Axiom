@@ -33,7 +33,7 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 APP_TITLE       := 	Axiom
 APP_DESCRIPTION := 	Axiom
-APP_AUTHOR	:=	By vugbdok8307, andrea__2209, thom5582
+APP_AUTHOR	:=	By thom5582 and andrea__2209
 TARGET		:=	axiom
 BUILD		:=	build
 SOURCES		:=	source source/states source/sysmodules
@@ -54,7 +54,7 @@ VERSION_HEADER = version.hpp
 
 VERSION_MAJOR := 0
 VERSION_MINOR := 9
-VERSION_MICRO := 5
+VERSION_MICRO := 6
 
 #GFXBUILD	:=	$(ROMFS)/gfx
 
