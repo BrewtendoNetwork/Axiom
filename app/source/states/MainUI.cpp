@@ -1,8 +1,11 @@
+#include <array>
 #include <format>
+#include <string>
 #include <3ds.h>
 #include <sys/stat.h>
 #include "MainUI.hpp"
 #include "../sysmodules/acta.hpp"
+#include "../sysmodules/httpc.hpp"
 #include "../plgldr.h"
 #include "../patchswap.hpp"
 
@@ -124,6 +127,69 @@ Result MainUI::createAccount(MainStruct *mainStruct, u8 friend_account_id, NascE
 
     handleResult(ACTA_UnbindServerAccount(friend_account_id, true), mainStruct, "Reset account");
     return rc;
+}
+
+Result MainUI::handleAzahar(u8 friend_account_id) {
+    s64 emu_id = 0;
+    svcGetSystemInfo(&emu_id, 0x20000, 0);
+
+    if (emu_id != 2) {
+        // This is not Azahar, nothing to do
+        return 0;
+    }
+
+    std::array<std::string, 3> patterns = {{
+        {"nintendowifi\\.net"},
+        {"nintendo\\.net"},
+        {"pokemon-gl\\.com"}
+    }};
+    const std::string replacement = "pretendo.cc";
+
+    Result res = httpcInit(0x1000);
+    if (friend_account_id == 2) {
+        // Register Pretendo replacement URLs
+        if (R_SUCCEEDED(res)) {
+            for (const auto& pattern : patterns) {
+                res = HTTPC_Azahar_RegisterURLReplacement(pattern.c_str(), replacement.c_str(), pattern.size(), replacement.size());
+                if (R_FAILED(res)) {
+                    // If the rule already exists clear it and register again
+                    if (res == MAKERESULT(RL_STATUS, RS_INVALIDARG, RM_HTTP, RD_ALREADY_EXISTS)) {
+                        res = HTTPC_Azahar_UnregisterURLReplacement(pattern.c_str(), pattern.size());
+                        if (R_FAILED(res)) {
+                            break;
+                        }
+                        res = HTTPC_Azahar_RegisterURLReplacement(pattern.c_str(), replacement.c_str(), pattern.size(), replacement.size());
+                        if (R_FAILED(res)) {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    } else {
+        // Unregister Pretendo replacement URLs
+        for (const auto& pattern : patterns) {
+            res = HTTPC_Azahar_UnregisterURLReplacement(pattern.c_str(), pattern.size());
+            if (R_FAILED(res)) {
+                break;
+            } else {
+                // Result may have a non-failure info value indicating that the pattern
+                // was not registered, clear it.
+                res = 0;
+            }
+        }
+    }
+
+    if (res == MAKERESULT(RL_PERMANENT, RS_WRONGARG, RM_OS, 47)) {
+        // LLE HTTP was enabled, so custom command didn't exist
+        // the HTTP patches will be used instead, so ignore error.
+        res = 0;
+    }
+
+    httpcExit();
+    return res;
 }
 
 void MainUI::migrateAccount(MainStruct *mainStruct) {
@@ -302,7 +368,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
         loadAndPlayBGM("romfs:/bgm/AXIOM_MAIN_BGM.wav");
         mainStruct->musicStarted = true;
     }
- 
+
     if (!mainStruct->updateChecked) {
         mainStruct->updateChecked = true;
         if (auto* updateCheck = std::fopen(AXIOM_UPDATE_PATH "/update.txt", "rb")) {
@@ -321,7 +387,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                 std::rename(AXIOM_UPDATE_PATH "/0004013000002E02.ips", "/luma/sysmodules/0004013000002E02.ips");
                 std::remove("/luma/sysmodules/0004013000002F02.ips");
                 std::rename(AXIOM_UPDATE_PATH "/0004013000002F02.ips", "/luma/sysmodules/0004013000002F02.ips");
- 
+
                 mkdir("/luma/titles", 0777);
                 mkdir("/luma/titles/000400300000BC02", 0777);
                 std::remove("/luma/titles/000400300000BC02/code.ips");
@@ -332,14 +398,14 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                 mkdir("/luma/titles/000400300000BE02", 0777);
                 std::remove("/luma/titles/000400300000BE02/code.ips");
                 std::rename(AXIOM_UPDATE_PATH "/000400300000BE02.ips", "/luma/titles/000400300000BE02/code.ips");
- 
+
                 mkdir("/luma/plugins", 0777);
                 std::remove("/luma/plugins/axiom.3gx");
                 std::rename(AXIOM_UPDATE_PATH "/axiom.3gx", "/luma/plugins/axiom.3gx");
- 
+
                 std::remove("/3ds/bver-prod.pem");
                 std::rename(AXIOM_UPDATE_PATH "/bver-prod.pem", "/3ds/bver-prod.pem");
- 
+
                 std::remove(AXIOM_UPDATE_PATH "/update.txt");
             }
             LOG_AXIOM_ERROR(mainStruct, "Axiom has been updated!\n\nPress start to reboot.");
@@ -350,10 +416,10 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
             return false;
         }
     }
- 
+
     if (kDown & KEY_START) loadAndPlaySFX("romfs:/sfx/HOME_OPEN.wav");
     if (kDown & KEY_START) return true;
- 
+
     updatePrompt(mainStruct, kDown);
     if (mainStruct->prompt.active) {
         if (mainStruct->prompt.result == PromptResult::Yes) {
@@ -382,22 +448,22 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
             return false;
         }
     }
- 
+
     C2D_SceneBegin(top_screen);
     DrawVersionString();
     C2D_DrawSprite(&mainStruct->top);
- 
+
     if (mainStruct->errorString[0] != 0) {
         DrawString(0.5f, 0xFF000000, mainStruct->errorString, 0);
     } else if (mainStruct->swapPhase != SwapPhase::Idle &&
                mainStruct->swapPhase != SwapPhase::Done) {
         DrawString(0.45f, infoColor, mainStruct->swapStatusMsg, 0);
     }
- 
+
     C2D_SceneBegin(bottom_screen);
     C2D_DrawSprite(&mainStruct->bottom);
     if (!mainStruct->prompt.active) DrawControls();
- 
+
     if (mainStruct->buttonSelected == NascEnvironment::NASC_ENV_Prod) {
         if (mainStruct->currentAccount == NascEnvironment::NASC_ENV_Prod) {
             C2D_DrawSprite(&mainStruct->nintendo_loaded_selected);
@@ -426,7 +492,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
     }
     C2D_DrawSprite(&mainStruct->header);
     drawPrompt(mainStruct);
- 
+
     if (!mainStruct->needsReboot && !mainStruct->prompt.active) {
         if (kDown & KEY_TOUCH) {
             if ((touch.px >= 165 && touch.px <= 269) && (touch.py >= 59 && touch.py <= 172)) {
@@ -445,20 +511,20 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                     : NascEnvironment::NASC_ENV_Dev;
             loadAndPlaySFX("romfs:/sfx/ACC_SELECT.wav");
         }
- 
+
         if (mainStruct->prompt.active) return false;
- 
+
         if (kDown & KEY_A) {
             loadAndPlaySFX("romfs:/sfx/ACC_START.wav");
             mainStruct->buttonWasPressed = true;
         }
- 
+
         if (kDown & KEY_L) {
             loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
- 
+
             u64 freeBytes = GetSDFreeBytes();
             mainStruct->sdFreeBytes = freeBytes;
- 
+
             if (freeBytes < MIN_FREE_SPACE_BYTES) {
                 openPrompt(mainStruct,
                     std::format(
@@ -477,7 +543,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
             }
             return false;
         }
- 
+
         if (kDown & KEY_X) {
             if (R_SUCCEEDED(retBNID)) {
                 if (R_FAILED(retBNID = ACT_GetAccountIndexOfFriendAccountId(&bnidAccountSlot, 3)))
@@ -507,21 +573,21 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                 }
             }
         }
- 
+
         if (kDown & KEY_Y) {
             launchPlugin(mainStruct);
             mainStruct->buttonWasPressed = false;
             return false;
         }
     }
- 
+
     if (mainStruct->buttonWasPressed) {
         mainStruct->errorString[0] = 0;
- 
+
         if (mainStruct->currentAccount == mainStruct->buttonSelected) return true;
- 
+
         u8 accountId = (u8)mainStruct->buttonSelected + 1;
- 
+
         Result rc = unloadAccount(mainStruct);
         if (R_SUCCEEDED(rc)) {
             rc = switchAccounts(mainStruct, accountId);
@@ -530,17 +596,22 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                 rc = createAccount(mainStruct, accountId, NascEnvironment::NASC_ENV_Dev);
             }
         }
- 
+
+        if (R_SUCCEEDED(rc)) {
+            rc = handleAzahar(accountId);
+            LOG_NIMBUS_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", rc).c_str());
+        }
+
         if (R_FAILED(rc)) {
             aptSetHomeAllowed(false);
             mainStruct->needsReboot      = true;
             mainStruct->buttonWasPressed = false;
             return false;
         }
- 
+
         mainStruct->needsReboot = true;
         return true;
     }
- 
+
     return false;
 }
