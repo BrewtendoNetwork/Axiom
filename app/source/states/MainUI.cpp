@@ -143,7 +143,7 @@ Result MainUI::handleAzahar(u8 friend_account_id) {
         {"nintendo\\.net"},
         {"pokemon-gl\\.com"}
     }};
-    const std::string replacement = "pretendo.cc";
+    const std::string replacement = "brewtendo.cc";
 
     Result res = httpcInit(0x1000);
     if (friend_account_id == 2) {
@@ -599,7 +599,7 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
 
         if (R_SUCCEEDED(rc)) {
             rc = handleAzahar(accountId);
-            LOG_NIMBUS_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", rc).c_str());
+            LOG_AXIOM_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", rc).c_str());
         }
 
         if (R_FAILED(rc)) {
