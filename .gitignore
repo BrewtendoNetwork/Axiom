@@ -59,3 +59,5 @@ patches/ssl
 audacity files/AXIOM_BGM.aup3
 
 .vs
+
+*.zip
