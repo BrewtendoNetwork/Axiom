@@ -6,14 +6,14 @@
 
 | Service | Status |
 | --- | --- |
-| Nintendo 3DS eShop | Still needs work but it can be opened and be able to navigate |
-| Badge Arcade | In the works |
-| Nintendo Video | In the works |
+| Nintendo 3DS eShop | Basically works |
+| Badge Arcade | Works, with a few bugs |
+| Nintendo Video | Works for USA |
 | SpotPass | Partially working |
 | BNID | Works |
-| Miiverse | Works |
+| Miiverse | Non Working currently |
 | Friend List | Works |
-| Axiom (Proxyless patcher) | Works, but still is buggy |
+| Axiom (Proxyless patcher) | Works, has some minor bugs |
 | Games | Unavailable |
 | Theme Shop | Unavailable |
 
