@@ -7,6 +7,7 @@ namespace MainUI {
     Result unloadAccount(MainStruct* mainStruct);
     Result switchAccounts(MainStruct* mainStruct, u8 friend_account_id);
     Result createAccount(MainStruct* mainStruct, u8 friend_account_id, NascEnvironment environmentId);
+    Result switchAccountWithRetry(MainStruct* mainStruct, u8 friend_account_id, NascEnvironment environmentId);
     void   openPrompt(MainStruct* mainStruct, const std::string& message, PromptStatus promptStatus);
     void   updatePrompt(MainStruct* mainStruct, u32 kDown);
     void   drawPrompt(MainStruct* mainStruct);
@@ -84,7 +85,8 @@ static void doSwitchBackToBrewtendo(MainStruct* mainStruct) {
     if (!ok && mainStruct->swapPhase == SwapPhase::Failed) {
         if (mainStruct->errorString[0] == 0 && !mainStruct->swapStatusMsg.empty())
             snprintf(mainStruct->errorString, sizeof(mainStruct->errorString),
-                "%s\n\nPress START to reboot.", mainStruct->swapStatusMsg.c_str());
+                "%s", mainStruct->swapStatusMsg.c_str());
+        ensureRebootPrompt(mainStruct);
         char testPath[256];
         snprintf(testPath, sizeof(testPath), "%s/%s", AXIOM_TEMP_PATH,
                  AXIOM_PATCH_FILES[0].filename);
@@ -104,17 +106,11 @@ static void doSwitchBackToBrewtendo(MainStruct* mainStruct) {
     }
 
     if (ok) {
-        Result rc = MainUI::unloadAccount(mainStruct);
-        if (R_SUCCEEDED(rc)) {
-            rc = MainUI::switchAccounts(mainStruct, 3);
-            if (R_FAILED(rc)) {
-                memset(mainStruct->errorString, 0, 256);
-                rc = MainUI::createAccount(mainStruct, 3, NascEnvironment::NASC_ENV_Dev);
-            }
-        }
+        Result rc = MainUI::switchAccountWithRetry(mainStruct, 3, NascEnvironment::NASC_ENV_Dev);
 
         if (R_FAILED(rc)) {
             LOGF_AXIOM_ERROR(mainStruct, "Account switch failed: %08lx.\n\nPress start to reboot.", rc);
+            ensureRebootPrompt(mainStruct);
             aptSetHomeAllowed(false);
             mainStruct->needsReboot = true;
             return;
@@ -134,22 +130,17 @@ static void doRestoreFromBackup(MainStruct* mainStruct) {
         LOG_AXIOM_ERROR(mainStruct,
             "Backup restore failed. Please re-install axiom "
             "or open a support ticket on the Brewtendo Discord.");
+        ensureRebootPrompt(mainStruct);
         aptSetHomeAllowed(false);
         mainStruct->needsReboot = true;
         return;
     }
 
-    Result rc = MainUI::unloadAccount(mainStruct);
-    if (R_SUCCEEDED(rc)) {
-        rc = MainUI::switchAccounts(mainStruct, 3);
-        if (R_FAILED(rc)) {
-            memset(mainStruct->errorString, 0, 256);
-            rc = MainUI::createAccount(mainStruct, 3, NascEnvironment::NASC_ENV_Dev);
-        }
-    }
+    Result rc = MainUI::switchAccountWithRetry(mainStruct, 3, NascEnvironment::NASC_ENV_Dev);
 
     if (R_FAILED(rc)) {
         LOGF_AXIOM_ERROR(mainStruct, "Account switch failed: %08lx.\n\nPress start to reboot", rc);
+        ensureRebootPrompt(mainStruct);
         aptSetHomeAllowed(false);
         mainStruct->needsReboot = true;
         return;

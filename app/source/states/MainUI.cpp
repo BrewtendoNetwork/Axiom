@@ -129,6 +129,38 @@ Result MainUI::createAccount(MainStruct *mainStruct, u8 friend_account_id, NascE
     return rc;
 }
 
+Result MainUI::switchAccountWithRetry(MainStruct* mainStruct, u8 friend_account_id, NascEnvironment environmentId) {
+    u8 previousFriendId = (u8)mainStruct->currentAccount + 1;
+
+    Result rc = unloadAccount(mainStruct);
+    if (R_SUCCEEDED(rc)) {
+        rc = switchAccounts(mainStruct, friend_account_id);
+        if (R_FAILED(rc)) {
+            memset(mainStruct->errorString, 0, sizeof(mainStruct->errorString));
+            rc = createAccount(mainStruct, friend_account_id, environmentId);
+        }
+    }
+
+    if (R_FAILED(rc) && previousFriendId != friend_account_id) {
+        // Switch back to whatever account was active before, then retry once.
+        memset(mainStruct->errorString, 0, sizeof(mainStruct->errorString));
+        Result restoreRc = switchAccounts(mainStruct, previousFriendId);
+        if (R_SUCCEEDED(restoreRc)) {
+            memset(mainStruct->errorString, 0, sizeof(mainStruct->errorString));
+            rc = unloadAccount(mainStruct);
+            if (R_SUCCEEDED(rc)) {
+                rc = switchAccounts(mainStruct, friend_account_id);
+                if (R_FAILED(rc)) {
+                    memset(mainStruct->errorString, 0, sizeof(mainStruct->errorString));
+                    rc = createAccount(mainStruct, friend_account_id, environmentId);
+                }
+            }
+        }
+    }
+
+    return rc;
+}
+
 Result MainUI::handleAzahar(u8 friend_account_id) {
     s64 emu_id = 0;
     svcGetSystemInfo(&emu_id, 0x20000, 0);
@@ -143,10 +175,10 @@ Result MainUI::handleAzahar(u8 friend_account_id) {
         {"nintendo\\.net"},
         {"pokemon-gl\\.com"}
     }};
-    const std::string replacement = "brewtendo.cc";
 
     Result res = httpcInit(0x1000);
-    if (friend_account_id == 2) {
+    if (friend_account_id == 2 || friend_account_id == 3) {
+        const std::string replacement = friend_account_id == 2 ? "pretendo.cc" : "brewtendo.cc";
         // Register Pretendo replacement URLs
         if (R_SUCCEEDED(res)) {
             for (const auto& pattern : patterns) {
@@ -314,41 +346,35 @@ static void doSwitchToPretendo(MainStruct* mainStruct) {
     PatchSwap::Manifest* manifest = new PatchSwap::Manifest();
     memset(manifest, 0, sizeof(PatchSwap::Manifest));
     bool ok = PatchSwap::SwitchToPretendo(mainStruct, manifest);
-    delete manifest;
 
     if (!ok) {
         if (mainStruct->errorString[0] == 0 && !mainStruct->swapStatusMsg.empty())
             snprintf(mainStruct->errorString, sizeof(mainStruct->errorString),
-                "%s\n\nPress START to reboot.", mainStruct->swapStatusMsg.c_str());
-        else if (mainStruct->errorString[0] != 0) {
-            std::string es(mainStruct->errorString);
-            if (es.find("Press START") == std::string::npos)
-                snprintf(mainStruct->errorString, sizeof(mainStruct->errorString),
-                    "%s\n\nPress START to reboot.", es.c_str());
-        }
+                "%s", mainStruct->swapStatusMsg.c_str());
+        ensureRebootPrompt(mainStruct);
         aptSetHomeAllowed(false);
         mainStruct->needsReboot = true;
+        delete manifest;
         return;
     }
 
-    Result rc = MainUI::unloadAccount(mainStruct);
-    if (R_SUCCEEDED(rc)) {
-        rc = MainUI::switchAccounts(mainStruct, 2);
-        if (R_FAILED(rc)) {
-            memset(mainStruct->errorString, 0, 256);
-            rc = MainUI::createAccount(mainStruct, 2, NascEnvironment::NASC_ENV_Test);
-        }
-    }
+    Result rc = MainUI::switchAccountWithRetry(mainStruct, 2, NascEnvironment::NASC_ENV_Test);
 
     if (R_FAILED(rc)) {
         PatchSwap::WriteHandoff();
         LOGF_AXIOM_ERROR(mainStruct,
             "Pretendo patches installed but account switch failed: %08lx\n"
             "Open Nimbus to finish account setup.\n\nPress start to reboot.", rc);
+        ensureRebootPrompt(mainStruct);
         aptSetHomeAllowed(false);
         mainStruct->needsReboot = true;
+        delete manifest;
         return;
     }
+
+    Result azaharRc = MainUI::handleAzahar(2);
+    if (R_FAILED(azaharRc))
+        LOG_AXIOM_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", azaharRc).c_str());
 
     PatchSwap::WriteHandoff();
     mainStruct->swapPhase = SwapPhase::Done;
@@ -356,9 +382,13 @@ static void doSwitchToPretendo(MainStruct* mainStruct) {
 
     LOGF_AXIOM_ERROR(mainStruct,
         "Switched to Pretendo! Source: %s\nRelease: %s  Commit: %.8s\n\nPress start to reboot.",
-        manifest->source, manifest->release, manifest->commit);
+        sanitizeForDisplay(manifest->source).c_str(),
+        sanitizeForDisplay(manifest->release).c_str(),
+        manifest->commit);
+    ensureRebootPrompt(mainStruct);
     aptSetHomeAllowed(false);
     mainStruct->needsReboot = true;
+    delete manifest;
 }
 
 bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
@@ -588,21 +618,16 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
 
         u8 accountId = (u8)mainStruct->buttonSelected + 1;
 
-        Result rc = unloadAccount(mainStruct);
-        if (R_SUCCEEDED(rc)) {
-            rc = switchAccounts(mainStruct, accountId);
-            if (R_FAILED(rc)) {
-                memset(mainStruct->errorString, 0, 256);
-                rc = createAccount(mainStruct, accountId, NascEnvironment::NASC_ENV_Dev);
-            }
-        }
+        Result rc = MainUI::switchAccountWithRetry(mainStruct, accountId, mainStruct->buttonSelected);
 
         if (R_SUCCEEDED(rc)) {
-            rc = handleAzahar(accountId);
-            LOG_AXIOM_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", rc).c_str());
+            Result azaharRc = handleAzahar(accountId);
+            if (R_FAILED(azaharRc))
+                LOG_AXIOM_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", azaharRc).c_str());
         }
 
         if (R_FAILED(rc)) {
+            ensureRebootPrompt(mainStruct);
             aptSetHomeAllowed(false);
             mainStruct->needsReboot      = true;
             mainStruct->buttonWasPressed = false;

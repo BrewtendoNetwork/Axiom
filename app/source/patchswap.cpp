@@ -10,7 +10,7 @@
 
 static const Result HTTPC_PENDING = (Result)HTTPC_RESULTCODE_DOWNLOADPENDING;
 
-static u32  s_socBuffer[0x20000 / 4];
+alignas(0x1000) static u32 s_socBuffer[0x20000 / 4];
 static bool s_socInitialized = false;
 
 static void axiomSocInit() {

@@ -8,6 +8,7 @@
 #include <citro2d.h>
 #include <3ds.h>
 #include <algorithm>
+#include <cctype>
 #include <string>
 
 #define AXIOM_UPDATE_PATH       "/3ds/axiom/update"
@@ -157,6 +158,27 @@ const u32  infoColor         = C2D_Color32(45, 45, 44, 255);
     if (mainStruct->errorString[0] == 0) {                                                    \
         snprintf(mainStruct->errorString, sizeof(mainStruct->errorString), fmt, __VA_ARGS__); \
     }
+
+inline std::string sanitizeForDisplay(const std::string& in) {
+    std::string out;
+    out.reserve(in.size());
+    for (unsigned char c : in) {
+        if (c >= 0x20 && c <= 0x7E) out.push_back((char)c);
+    }
+    return out;
+}
+
+inline void ensureRebootPrompt(MainStruct* mainStruct) {
+    std::string es(mainStruct->errorString);
+    std::string lower = es;
+    for (auto& c : lower) c = (char)std::tolower((unsigned char)c);
+    if (lower.find("press start") != std::string::npos) return;
+
+    std::string result = es.empty()
+        ? "Done!\n\nPress START to reboot."
+        : es + "\n\nPress START to reboot.";
+    snprintf(mainStruct->errorString, sizeof(mainStruct->errorString), "%s", result.c_str());
+}
 
 #define handleResult(action, mainStruct, name) \
     rc = action;                                                                \
