@@ -72,7 +72,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ... 
-	@rm -fr $(BUILD) $(OUTPUT).elf
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).3gx
 
 re: clean all
 
