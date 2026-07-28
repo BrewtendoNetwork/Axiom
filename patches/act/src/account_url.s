@@ -25,7 +25,7 @@ set_base_account_url equ 0x10ed48
         bl set_base_account_url
         mov r0, #0x0
         pop { r0, r1, r2, r3, r4, pc }
-   
+
     ; .align will align relative to the file, not the above adr instructions
     ; This nop aligns the strings relative to the adr instructions
     ; nop
@@ -35,5 +35,5 @@ set_base_account_url equ 0x10ed48
 
     .align 4
     unofficial_url:
-      .asciiz "https://account.brewtendo.cc/v1/api/"
+      .asciiz "https://account.brewtendo.org/v1/api/"
   .endarea

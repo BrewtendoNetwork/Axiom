@@ -178,7 +178,7 @@ Result MainUI::handleAzahar(u8 friend_account_id) {
 
     Result res = httpcInit(0x1000);
     if (friend_account_id == 2 || friend_account_id == 3) {
-        const std::string replacement = friend_account_id == 2 ? "pretendo.cc" : "brewtendo.cc";
+        const std::string replacement = friend_account_id == 2 ? "pretendo.cc" : "brewtendo.org";
         // Register Pretendo replacement URLs
         if (R_SUCCEEDED(res)) {
             for (const auto& pattern : patterns) {
