@@ -56,6 +56,8 @@ VERSION_MAJOR := 0
 VERSION_MINOR := 9
 VERSION_MICRO := 9
 
+AXIOM_BETA_HASH ?=
+
 #GFXBUILD	:=	$(ROMFS)/gfx
 
 #---------------------------------------------------------------------------------
@@ -253,8 +255,10 @@ $(VERSION_HEADER):
 	@echo "#define VERSION_MAJOR $(VERSION_MAJOR)" >> $@.new
 	@echo "#define VERSION_MINOR $(VERSION_MINOR)" >> $@.new
 	@echo "#define VERSION_MICRO $(VERSION_MICRO)" >> $@.new
+	@echo "" >> $@.new
+	@echo "#define AXIOM_BETA_HASH \"$(AXIOM_BETA_HASH)\"" >> $@.new
 	@if ! cmp -s $@ $@.new; then mv $@.new $@; else rm $@.new; fi
-	
+
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
 #---------------------------------------------------------------------------------

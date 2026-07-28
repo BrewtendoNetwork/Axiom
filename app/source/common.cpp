@@ -75,10 +75,27 @@ void DrawVersionString() {
     int bottomOffset     = 240 - offset;
     int horizontalOffset = 320 - offset;
 
+    bool hasBetaHash = AXIOM_BETA_HASH[0] != '\0';
+    float versionY = bottomOffset - GetStringHeight(size, text.c_str());
+
+    if (hasBetaHash) {
+        std::string betaHash = std::format("Beta hash: {}", AXIOM_BETA_HASH);
+        float betaHashSize = 0.4f;
+        float betaHashHeight = GetStringHeight(betaHashSize, betaHash.c_str());
+        float betaHashY = bottomOffset - betaHashHeight;
+
+        versionY = betaHashY - GetStringHeight(size, text.c_str()) - 2;
+
+        C2D_TextBufClear(textBuf);
+        C2D_TextFontParse(&c2d_text, font, textBuf, betaHash.c_str());
+        C2D_TextOptimize(&c2d_text);
+        C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, betaHashY, 0.5f, betaHashSize, betaHashSize, C2D_Color32(120, 120, 120, 255));
+    }
+
     C2D_TextBufClear(textBuf);
     C2D_TextFontParse(&c2d_text, font, textBuf, text.c_str());
     C2D_TextOptimize(&c2d_text);
-    C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, bottomOffset - GetStringHeight(size, text.c_str()), 0.5f, size, size, C2D_Color32(0, 0, 0, 255));
+    C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, versionY, 0.5f, size, size, C2D_Color32(0, 0, 0, 255));
 }
 
 bool GetLumaOptionByIndex(LumaConfigBitIndex index, s64 options) {
