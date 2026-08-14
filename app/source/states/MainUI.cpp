@@ -7,7 +7,6 @@
 #include "../sysmodules/acta.hpp"
 #include "../sysmodules/httpc.hpp"
 #include "../plgldr.h"
-#include "../patchswap.hpp"
 
 const char *AXIOM_PLUGIN       = "/luma/plugins/axiom.3gx";
 const char *AXIOM_PLUGIN_MAGIC = "AXOM";
@@ -177,7 +176,7 @@ Result MainUI::handleAzahar(u8 friend_account_id) {
     }};
 
     Result res = httpcInit(0x1000);
-    if (friend_account_id == 2 || friend_account_id == 3) {
+    if (friend_account_id == 2 || friend_account_id == 4) {
         const std::string replacement = friend_account_id == 2 ? "pretendo.cc" : "brewtendo.org";
         // Register Pretendo replacement URLs
         if (R_SUCCEEDED(res)) {
@@ -332,65 +331,6 @@ void MainUI::drawPrompt(MainStruct* mainStruct) {
     C2D_DrawText(&hintText, C2D_WithColor | C2D_AlignCenter, screenW / 2.0f, boxY + boxH - 18.0f, 0.4f, 0.5f,  0.5f,  white);
 }
 
-static void doSwitchToPretendo(MainStruct* mainStruct) {
-    mainStruct->swapPhase     = SwapPhase::Idle;
-    mainStruct->swapStatusMsg = "";
-
-    bool spaceOK = PatchSwap::CheckFreeSpace(mainStruct);
-    if (!spaceOK) {
-        mainStruct->swapStatusMsg = std::format(
-            "Low space ({} MB) — proceeding with caution...",
-            mainStruct->sdFreeBytes / (1024 * 1024));
-    }
-
-    PatchSwap::Manifest* manifest = new PatchSwap::Manifest();
-    memset(manifest, 0, sizeof(PatchSwap::Manifest));
-    bool ok = PatchSwap::SwitchToPretendo(mainStruct, manifest);
-
-    if (!ok) {
-        if (mainStruct->errorString[0] == 0 && !mainStruct->swapStatusMsg.empty())
-            snprintf(mainStruct->errorString, sizeof(mainStruct->errorString),
-                "%s", mainStruct->swapStatusMsg.c_str());
-        ensureRebootPrompt(mainStruct);
-        aptSetHomeAllowed(false);
-        mainStruct->needsReboot = true;
-        delete manifest;
-        return;
-    }
-
-    Result rc = MainUI::switchAccountWithRetry(mainStruct, 2, NascEnvironment::NASC_ENV_Test);
-
-    if (R_FAILED(rc)) {
-        PatchSwap::WriteHandoff();
-        LOGF_AXIOM_ERROR(mainStruct,
-            "Pretendo patches installed but account switch failed: %08lx\n"
-            "Open Nimbus to finish account setup.\n\nPress start to reboot.", rc);
-        ensureRebootPrompt(mainStruct);
-        aptSetHomeAllowed(false);
-        mainStruct->needsReboot = true;
-        delete manifest;
-        return;
-    }
-
-    Result azaharRc = MainUI::handleAzahar(2);
-    if (R_FAILED(azaharRc))
-        LOG_AXIOM_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", azaharRc).c_str());
-
-    PatchSwap::WriteHandoff();
-    mainStruct->swapPhase = SwapPhase::Done;
-    loadAndPlaySFX("romfs:/sfx/MES_INFO.wav");
-
-    LOGF_AXIOM_ERROR(mainStruct,
-        "Switched to Pretendo! Source: %s\nRelease: %s  Commit: %.8s\n\nPress start to reboot.",
-        sanitizeForDisplay(manifest->source).c_str(),
-        sanitizeForDisplay(manifest->release).c_str(),
-        manifest->commit);
-    ensureRebootPrompt(mainStruct);
-    aptSetHomeAllowed(false);
-    mainStruct->needsReboot = true;
-    delete manifest;
-}
-
 bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                     C3D_RenderTarget* bottom_screen, u32 kDown, u32 kHeld, touchPosition touch)
 {
@@ -435,6 +375,8 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
 
                 std::remove("/3ds/bver-prod.pem");
                 std::rename(AXIOM_UPDATE_PATH "/bver-prod.pem", "/3ds/bver-prod.pem");
+                std::remove("/3ds/juxt-prod.pem");
+                std::rename(AXIOM_UPDATE_PATH "/juxt-prod.pem", "/3ds/juxt-prod.pem");
 
                 std::remove(AXIOM_UPDATE_PATH "/update.txt");
             }
@@ -460,12 +402,6 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
                 case PromptStatus::BNIDUnlink:
                     unlinkBNID(mainStruct);
                     break;
-                case PromptStatus::PretendoSwitch:
-                    doSwitchToPretendo(mainStruct);
-                    break;
-                case PromptStatus::PretendoSwitchLowSD:
-                    doSwitchToPretendo(mainStruct);
-                    break;
                 default:
                     LOG_AXIOM_ERROR(mainStruct, "Unknown prompt called.");
                     break;
@@ -485,9 +421,6 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
 
     if (mainStruct->errorString[0] != 0) {
         DrawString(0.5f, 0xFF000000, mainStruct->errorString, 0);
-    } else if (mainStruct->swapPhase != SwapPhase::Idle &&
-               mainStruct->swapPhase != SwapPhase::Done) {
-        DrawString(0.45f, infoColor, mainStruct->swapStatusMsg, 0);
     }
 
     C2D_SceneBegin(bottom_screen);
@@ -552,26 +485,25 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
         if (kDown & KEY_L) {
             loadAndPlaySFX("romfs:/sfx/ACC_TAP.wav");
 
-            u64 freeBytes = GetSDFreeBytes();
-            mainStruct->sdFreeBytes = freeBytes;
+            if (mainStruct->currentAccount != NascEnvironment::NASC_ENV_Test) {
+                Result rc = MainUI::switchAccountWithRetry(mainStruct, 2, NascEnvironment::NASC_ENV_Test);
 
-            if (freeBytes < MIN_FREE_SPACE_BYTES) {
-                openPrompt(mainStruct,
-                    std::format(
-                        "Warning: only {} MB free on SD.\n"
-                        "This may not be enough to switch safely.\n\n"
-                        "A: Risk it    B: Cancel (free up space first)",
-                        freeBytes / (1024 * 1024)),
-                    PromptStatus::PretendoSwitchLowSD);
-            } else {
-                openPrompt(mainStruct,
-                    "Switch to Pretendo?\n\n"
-                    "This will download and install Pretendo patches,\n"
-                    "switch your account, and reboot.\n\n"
-                    "A: Switch    B: Cancel",
-                    PromptStatus::PretendoSwitch);
+                if (R_SUCCEEDED(rc)) {
+                    Result azaharRc = handleAzahar(2);
+                    if (R_FAILED(azaharRc))
+                        LOG_AXIOM_ERROR(mainStruct, std::format("Failed to apply Azahar configuration: {}", azaharRc).c_str());
+                }
+
+                if (R_FAILED(rc)) {
+                    ensureRebootPrompt(mainStruct);
+                    aptSetHomeAllowed(false);
+                    mainStruct->needsReboot = true;
+                    return false;
+                }
+
+                mainStruct->needsReboot = true;
             }
-            return false;
+            return true;
         }
 
         if (kDown & KEY_X) {

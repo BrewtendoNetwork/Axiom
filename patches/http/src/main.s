@@ -85,43 +85,46 @@ replace_function_addr equ 0x11AA70
 		bx      lr
 
 	handle_replacements: ; 0x1ac4c
-		push    {r11, lr}
-		add     r11, sp, #4
-		sub     sp, sp, #0x28
-		str     r0, [r11, #-0x28] ; store r0 (our char* we are replacing string stuff on) into stack -0x28
-		bl      get_nasc_environment ; get the nasc environment
-		cmp     r0, #3 ; check if r0 is 3
-		bne     handle_replacements_end ; if it isnt, skip the replacements
+    	push    {r11, lr}
+    	add     r11, sp, #4
+    	sub     sp, sp, #0x28
+    	str     r0, [r11, #-0x28]
+    	bl      get_nasc_environment
 
-		; else, run the replacements
-		ldr     r3, =target1
-		str     r3, [r11, #-0x8] ; store the just loaded target1 into stack -0x8
-		ldr     r3, =target2
-		str     r3, [r11, #-0xc] ; store the just loaded target2 into stack -0xc
-		ldr     r3, =target3
-		str     r3, [r11, #-0x10] ; store the just loaded target3 into stack -0x10
-		ldr     r3, =replacementBrewtendo
-		str     r3, [r11, #-0x14] ; store the just loaded replacementBrewtendo into stack -0x14
+	    cmp     r0, #3
+	    ldreq   r3, =replacementBrewtendo
+    	beq     env_chosen
+    	cmp     r0, #2
+    	ldreq   r3, =replacementPretendo
+    	bne     handle_replacements_end
+    env_chosen:
+	    str     r3, [r11, #-0x14]
 
-		ldr     r2, [r11, #-0x14] ; load replacementBrewtendo into r2
-		ldr     r1, [r11, #-0x8] ; load target1 into r1
-		ldr     r0, [r11, #-0x28] ; load our char* back into r0
-		bl      find_and_replace
-		ldr     r2, [r11, #-0x14] ; load replacementBrewtendo into r2
-		ldr     r1, [r11, #-0xc] ; load target2 into r1
-		ldr     r0, [r11, #-0x28] ; load our char* back into r0
-		bl      find_and_replace
-		ldr     r2, [r11, #-0x14] ; load replacementBrewtendo into r2
-		ldr     r1, [r11, #-0x10] ; load target3 into r1
-		ldr     r0, [r11, #-0x28] ; load our char* back into r0
-		bl      find_and_replace
+	    ldr     r3, =target1
+	    str     r3, [r11, #-0x8]
+	    ldr     r3, =target2
+	    str     r3, [r11, #-0xc]
+	    ldr     r3, =target3
+	    str     r3, [r11, #-0x10]
 
-	handle_replacements_end: ; 0x1acb8
-		mov     r0, r0
-		mov     r0, r3
-		sub     sp, r11, #4
-		pop     {r11, lr}
-		bx      lr
+	    ldr     r2, [r11, #-0x14]
+	    ldr     r1, [r11, #-0x8]
+	    ldr     r0, [r11, #-0x28]
+	    bl      find_and_replace
+	    ldr     r2, [r11, #-0x14]
+	    ldr     r1, [r11, #-0xc]
+	    ldr     r0, [r11, #-0x28]
+	    bl      find_and_replace
+	    ldr     r2, [r11, #-0x14]
+	    ldr     r1, [r11, #-0x10]
+	    ldr     r0, [r11, #-0x28]
+	    bl      find_and_replace
+    handle_replacements_end:
+	    mov     r0, r0
+	    mov     r0, r3
+	    sub     sp, r11, #4
+    	pop     {r11, lr}
+	    bx      lr
 
 	.include "src/frdu.s"
 
@@ -142,5 +145,8 @@ replace_function_addr equ 0x11AA70
 
     replacementBrewtendo:
 		.asciiz "brewtendo.org"
+
+	replacementPretendo:
+	    .asciiz "pretendo.cc"
 
 .close

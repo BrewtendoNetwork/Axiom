@@ -1,6 +1,5 @@
 #include "common.hpp"
 #include <3ds/services/cfgu.h>
-#include <3ds/services/fs.h>
 #include <format>
 
 // credit to the universal-team for most/all of the code past here
@@ -126,16 +125,4 @@ void drawLumaInfo(MainStruct *mainStruct) {
         mainStruct->lumaOptions & 0xFFFF), 0);
 }
 
-u64 GetSDFreeBytes() {
-    FS_Archive sdmcArchive;
-    Result rc = FSUSER_OpenArchive(&sdmcArchive, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""));
-    if (R_FAILED(rc)) return 0;
 
-    FS_ArchiveResource resource = {};
-    rc = FSUSER_GetArchiveResource(&resource, SYSTEM_MEDIATYPE_SD);
-    FSUSER_CloseArchive(sdmcArchive);
-
-    if (R_FAILED(rc)) return 0;
-
-    return (u64)resource.freeClusters * (u64)resource.clusterSize;
-}

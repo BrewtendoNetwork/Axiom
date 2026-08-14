@@ -12,40 +12,13 @@
 #include <string>
 
 #define AXIOM_UPDATE_PATH       "/3ds/axiom/update"
-#define AXIOM_BACKUP_PATH       "/3ds/axiom/backup"
-#define AXIOM_TEMP_PATH         "/3ds/axiom/pretendo_temp"
-#define AXIOM_HANDOFF_FILE      "/3ds/axiom/pretendo_handoff"
-#define AXIOM_MANIFEST_URL      "https://cdn.brewtendo.cc/pretendo/manifest.json"
-#define AXIOM_CDN_BASE_URL      "https://cdn.brewtendo.cc/patches"
 
 #define NIMBUS_TITLE_ID         0x000400000D40D200ULL
 
-#define MIN_FREE_SPACE_BYTES    (50ULL * 1024ULL * 1024ULL)
-
-struct PatchFile {
-    const char* filename;   
-    const char* lumaPath;   
-};
-
-static constexpr PatchFile AXIOM_PATCH_FILES[] = {
-    { "0004013000003202.ips", "/luma/sysmodules/0004013000003202.ips"      },
-    { "0004013000003802.ips", "/luma/sysmodules/0004013000003802.ips"      },
-    { "0004013000002902.ips", "/luma/sysmodules/0004013000002902.ips"      },
-    { "0004013000002E02.ips", "/luma/sysmodules/0004013000002E02.ips"      },
-    { "0004013000002F02.ips", "/luma/sysmodules/0004013000002F02.ips"      },
-    { "000400300000BC02.ips", "/luma/titles/000400300000BC02/code.ips"     },
-    { "000400300000BD02.ips", "/luma/titles/000400300000BD02/code.ips"     },
-    { "000400300000BE02.ips", "/luma/titles/000400300000BE02/code.ips"     },
-    { "axiom.3gx",            "/luma/plugins/axiom.3gx"                   },
-    { "bver-prod.pem",        "/3ds/bver-prod.pem"                        },
-};
-static constexpr int AXIOM_PATCH_FILE_COUNT =
-    (int)(sizeof(AXIOM_PATCH_FILES) / sizeof(AXIOM_PATCH_FILES[0]));
-
 enum class NascEnvironment : u8 {
     NASC_ENV_Prod = 0, // Nintendo
-    NASC_ENV_Test = 1, // Pretendo  
-    NASC_ENV_Dev  = 2  // Brewtendo 
+    NASC_ENV_Test = 1, // Pretendo
+    NASC_ENV_Dev  = 2  // Brewtendo
 };
 
 enum class CFWSystemInfoField : s32 {
@@ -70,21 +43,6 @@ enum class PromptResult {
 enum class PromptStatus {
     Unknown,
     BNIDUnlink,
-    PretendoSwitch,       
-    PretendoSwitchLowSD,  
-    PretendoIntercept,    
-    BrewtendoCDNFail,    
-};
-
-enum class SwapPhase {
-    Idle,
-    CheckingSpace,
-    BackingUp,
-    Downloading,
-    Moving,
-    SwitchingAccount,
-    Done,
-    Failed
 };
 
 struct PromptState {
@@ -123,13 +81,6 @@ struct MainStruct {
     bool needsReboot      = false;
     bool updateChecked    = false;
     bool musicStarted     = false;
-
-    bool pretendoInterceptChecked = false; 
-    bool pretendoInterceptActive  = false; 
-
-    SwapPhase   swapPhase    = SwapPhase::Idle;
-    std::string swapStatusMsg;
-    u64         sdFreeBytes  = 0;       
 
     char errorString[256];
 
@@ -203,5 +154,3 @@ s64  GetSystemInfoField(s32 category, CFWSystemInfoField accessor);
 std::tuple<u8, u8, u8> UnpackLumaVersion(s64 packed_version);
 std::tuple<u8, u8>     UnpackConfigVersion(s64 packed_config_version);
 void drawLumaInfo(MainStruct *mainStruct);
-
-u64 GetSDFreeBytes();

@@ -1,18 +1,5 @@
 #include "LumaValidation.hpp"
-#include "../patchswap.hpp"
-#include "../sysmodules/acta.hpp"
 #include <format>
-
-namespace MainUI {
-    Result unloadAccount(MainStruct* mainStruct);
-    Result switchAccounts(MainStruct* mainStruct, u8 friend_account_id);
-    Result createAccount(MainStruct* mainStruct, u8 friend_account_id, NascEnvironment environmentId);
-    Result switchAccountWithRetry(MainStruct* mainStruct, u8 friend_account_id, NascEnvironment environmentId);
-    void   openPrompt(MainStruct* mainStruct, const std::string& message, PromptStatus promptStatus);
-    void   updatePrompt(MainStruct* mainStruct, u32 kDown);
-    void   drawPrompt(MainStruct* mainStruct);
-}
-
 
 void PlayBGM(const char* path) {
     FILE* f = fopen(path, "rb");
@@ -72,91 +59,6 @@ void PlaySFX(const char* path) {
     ndspChnWaveBufAdd(1, &waveBuf);
 }
 
-static void doSwitchBackToBrewtendo(MainStruct* mainStruct) {
-    bool spaceOK = PatchSwap::CheckFreeSpace(mainStruct);
-    if (!spaceOK) {
-        mainStruct->swapStatusMsg = std::format(
-            "Warning: only {} MB free. Proceeding anyway...",
-            mainStruct->sdFreeBytes / (1024 * 1024));
-    }
-
-    bool ok = PatchSwap::SwitchToBrewtendo(mainStruct);
-
-    if (!ok && mainStruct->swapPhase == SwapPhase::Failed) {
-        if (mainStruct->errorString[0] == 0 && !mainStruct->swapStatusMsg.empty())
-            snprintf(mainStruct->errorString, sizeof(mainStruct->errorString),
-                "%s", mainStruct->swapStatusMsg.c_str());
-        ensureRebootPrompt(mainStruct);
-        char testPath[256];
-        snprintf(testPath, sizeof(testPath), "%s/%s", AXIOM_TEMP_PATH,
-                 AXIOM_PATCH_FILES[0].filename);
-        FILE* t = fopen(testPath, "rb");
-        if (!t) {
-            MainUI::openPrompt(mainStruct,
-                std::format(
-                    "CDN is unreachable.\n"
-                    "Fall back to local backup?\n"
-                    "(Backup may be outdated)\n\n"
-                    "A: Use backup    B: Cancel"),
-                PromptStatus::BrewtendoCDNFail);
-        } else {
-            fclose(t);
-        }
-        return;
-    }
-
-    if (ok) {
-        Result rc = MainUI::switchAccountWithRetry(mainStruct, 3, NascEnvironment::NASC_ENV_Dev);
-
-        if (R_FAILED(rc)) {
-            LOGF_AXIOM_ERROR(mainStruct, "Account switch failed: %08lx.\n\nPress start to reboot.", rc);
-            ensureRebootPrompt(mainStruct);
-            aptSetHomeAllowed(false);
-            mainStruct->needsReboot = true;
-            return;
-        }
-
-        PatchSwap::DeleteHandoff();
-        mainStruct->swapPhase = SwapPhase::Done;
-        mainStruct->needsReboot = true;
-    }
-}
-
-static void doRestoreFromBackup(MainStruct* mainStruct) {
-    mainStruct->swapStatusMsg = "Restoring Brewtendo patches from backup...";
-    bool ok = PatchSwap::RestoreFromBackup(mainStruct);
-
-    if (!ok) {
-        LOG_AXIOM_ERROR(mainStruct,
-            "Backup restore failed. Please re-install axiom "
-            "or open a support ticket on the Brewtendo Discord.");
-        ensureRebootPrompt(mainStruct);
-        aptSetHomeAllowed(false);
-        mainStruct->needsReboot = true;
-        return;
-    }
-
-    Result rc = MainUI::switchAccountWithRetry(mainStruct, 3, NascEnvironment::NASC_ENV_Dev);
-
-    if (R_FAILED(rc)) {
-        LOGF_AXIOM_ERROR(mainStruct, "Account switch failed: %08lx.\n\nPress start to reboot", rc);
-        ensureRebootPrompt(mainStruct);
-        aptSetHomeAllowed(false);
-        mainStruct->needsReboot = true;
-        return;
-    }
-
-    PatchSwap::DeleteHandoff();
-    mainStruct->swapPhase   = SwapPhase::Done;
-    mainStruct->needsReboot = true;
-}
-
-static void doLaunchNimbus(MainStruct* mainStruct) {
-    mainStruct->needsReboot = false;
-    aptSetHomeAllowed(true);
-    svcExitProcess();
-}
-
 bool LumaValidation::checkIfLumaOptionsEnabled(
     MainStruct* mainStruct,
     C3D_RenderTarget* top_screen,
@@ -168,12 +70,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(
     C2D_SceneBegin(top_screen);
     DrawVersionString();
     C2D_DrawSprite(&mainStruct->top);
-
-    if (mainStruct->swapPhase != SwapPhase::Idle &&
-        mainStruct->swapPhase != SwapPhase::Done &&
-        mainStruct->errorString[0] == 0) {
-        DrawString(0.45f, infoColor, mainStruct->swapStatusMsg, 0);
-    }
 
     C2D_SceneBegin(bottom_screen);
 
@@ -189,51 +85,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(
         return false;
     }
 
-    MainUI::updatePrompt(mainStruct, kDown);
-
-    if (mainStruct->prompt.active) {
-        if (mainStruct->prompt.result == PromptResult::Yes) {
-            PromptStatus status = mainStruct->prompt.status;
-            mainStruct->prompt.result = PromptResult::None;
-            mainStruct->prompt.active = false;
-
-            switch (status) {
-                case PromptStatus::PretendoIntercept:
-                    doSwitchBackToBrewtendo(mainStruct);
-                    break;
-
-                case PromptStatus::BrewtendoCDNFail:
-                    doRestoreFromBackup(mainStruct);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-        else if (mainStruct->prompt.result == PromptResult::No) {
-            PromptStatus status = mainStruct->prompt.status;
-            mainStruct->prompt.result = PromptResult::None;
-            mainStruct->prompt.active = false;
-
-            switch (status) {
-                case PromptStatus::PretendoIntercept:
-                    doLaunchNimbus(mainStruct);
-                    break;
-
-                case PromptStatus::BrewtendoCDNFail:
-                    mainStruct->pretendoInterceptActive = false;
-                    mainStruct->state = 1;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        MainUI::drawPrompt(mainStruct);
-        return false;
-    }
-
     if (mainStruct->needsReboot) {
         if (mainStruct->errorString[0] != 0) {
             DrawString(0.5f, 0xFF000000, mainStruct->errorString, 0);
@@ -241,34 +92,6 @@ bool LumaValidation::checkIfLumaOptionsEnabled(
             DrawString(0.5f, infoColor, "Done!\n\nPress start to reboot.", 0);
         }
         if (kDown & KEY_START) return true;
-        return false;
-    }
-
-    if (!mainStruct->pretendoInterceptChecked) {
-        mainStruct->pretendoInterceptChecked = true;
-        if (PatchSwap::HandoffExists()) {
-            mainStruct->pretendoInterceptActive = true;
-            PlaySFX("romfs:/sfx/MES_INFO.wav");
-            MainUI::openPrompt(mainStruct,
-                "Pretendo patches are currently active.\n\n"
-                "A: Switch back to Brewtendo\n"
-                "B: Exit Axiom (open Nimbus yourself)",
-                PromptStatus::PretendoIntercept);
-            MainUI::drawPrompt(mainStruct);
-            return false;
-        }
-    }
-
-    if (mainStruct->pretendoInterceptActive && !mainStruct->prompt.active) {
-        MainUI::openPrompt(mainStruct,
-            "Pretendo patches are currently active.\n\n"
-            "A: Switch back to Brewtendo\n"
-            "B: Exit Axiom (open Nimbus yourself)",
-            PromptStatus::PretendoIntercept);
-    }
-
-    if (mainStruct->pretendoInterceptActive) {
-        MainUI::drawPrompt(mainStruct);
         return false;
     }
 

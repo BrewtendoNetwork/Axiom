@@ -1,22 +1,23 @@
 // patch type to 1 (sdmc) instead of 5 (content:)
 .org load_cave_pem + 0x14
 	mov r2, #0x1
-	
-// set certificate location
-.org browser_cave_pem_string
-	.ascii "3ds/bver-prod.pem", 0
-	
+
+// natively select correct pem based on env
+.org 0x1E3218
+	bl pem_picker
+
 // include the fiddler rootca
 .org der_cert_address
 	der_cert_start:
 		.incbin    "rootca.der"
 	der_cert_end:
-	
+
 //sizeof max 26 instructions
 //r0, r1, r4, r8
 // adds root certificate
 .org add_default_cert_cave
 	add_root_cert:
+	    b       add_default_cert_cave_end
 		ldr     r0, =0x00240082             // httpC:AddRootCA
 		mrc     p15, 0x0, r4, c13, c0, 0x3  // TLS
 		ldr     r1, [r5, #0xC]              // load HTTPC handle
@@ -33,10 +34,7 @@
 		str     r8, [r4, #12]               // store translate header in cmdbuf[3]
 		swi     0x32                        // finally do the request
 		nop                                 // do whatever
-		b       add_default_cert_cave_end   // jump past the pool
 		.pool
 		nop
 		nop
 		nop
-		// so much nop
-        // bro 😭
