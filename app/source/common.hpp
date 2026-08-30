@@ -148,6 +148,7 @@ void       DrawString(float size, u32 color, std::string text, int flags);
 void       DrawControls();
 CFG_Region GetSystemRegion();
 void       DrawVersionString();
+void       DrawLicenseString();
 
 bool GetLumaOptionByIndex(LumaConfigBitIndex index, s64 options);
 s64  GetSystemInfoField(s32 category, CFWSystemInfoField accessor);

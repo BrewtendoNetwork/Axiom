@@ -72,7 +72,7 @@ void DrawVersionString() {
     float size = 0.5f;
     int offset = 6;
     int bottomOffset     = 240 - offset;
-    int horizontalOffset = 320 - offset;
+    int horizontalOffset = 400 - offset;
 
     bool hasBetaHash = AXIOM_BETA_HASH[0] != '\0';
     float versionY = bottomOffset - GetStringHeight(size, text.c_str());
@@ -95,6 +95,19 @@ void DrawVersionString() {
     C2D_TextFontParse(&c2d_text, font, textBuf, text.c_str());
     C2D_TextOptimize(&c2d_text);
     C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, versionY, 0.5f, size, size, C2D_Color32(0, 0, 0, 255));
+}
+
+void DrawLicenseString() {
+    C2D_Text c2d_text;
+    const char* text = "Licensed under the GNU General Public License v3.\nYou are entitled to the source code of this exact\nbuild. If you don't have it, ask whoever gave you\nthis app for it.";
+    float size = 0.35f;
+    int offset = 6;
+    int bottomOffset = 240 - offset - (int)GetStringHeight(size, text);
+
+    C2D_TextBufClear(textBuf);
+    C2D_TextFontParse(&c2d_text, font, textBuf, text);
+    C2D_TextOptimize(&c2d_text);
+    C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset, 0.5f, size, size, C2D_Color32(120, 120, 120, 255));
 }
 
 bool GetLumaOptionByIndex(LumaConfigBitIndex index, s64 options) {
@@ -124,5 +137,3 @@ void drawLumaInfo(MainStruct *mainStruct) {
         (mainStruct->lumaOptions >> 16) & 0xFFFF,
         mainStruct->lumaOptions & 0xFFFF), 0);
 }
-
-
