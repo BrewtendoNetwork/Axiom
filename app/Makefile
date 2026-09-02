@@ -46,8 +46,8 @@ GFXBUILD 	:=  $(BUILD)
 RSF_FILE := meta/axiom-cia.rsf
 
 ICON      := meta/icon.png
-BNR_IMAGE := meta/banner.png
-BNR_AUDIO := meta/audio.wav
+BNR_IMAGE := meta/banner.cgfx
+BNR_AUDIO := meta/brewjingle.wav
 LOGO 	  := meta/logoTEST.bin
 
 VERSION_HEADER = version.hpp
@@ -317,7 +317,7 @@ $(OUTPUT).cia:  $(OUTPUT).elf $(OUTPUT).smdh $(TARGET).bnr $(TOPDIR)/$(RSF_FILE)
 
 $(TARGET).bnr:  $(TOPDIR)/$(BNR_IMAGE) $(TOPDIR)/$(BNR_AUDIO)
 	@[ -d $(dir $@) ] || mkdir -p $(dir $@)
-	@bannertool makebanner -o $@ -i $(TOPDIR)/$(BNR_IMAGE) -a $(TOPDIR)/$(BNR_AUDIO)
+	@bannertool makebanner -o $@ -ci $(TOPDIR)/$(BNR_IMAGE) -a $(TOPDIR)/$(BNR_AUDIO)
 	@echo "built ... $@"
 
 -include $(DEPSDIR)/*.d

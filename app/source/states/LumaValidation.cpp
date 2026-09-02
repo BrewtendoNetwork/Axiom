@@ -68,9 +68,9 @@ bool LumaValidation::checkIfLumaOptionsEnabled(
     kDown |= kHeld;
 
     C2D_SceneBegin(top_screen);
+    C2D_DrawSprite(&mainStruct->top);
     DrawVersionString();
     DrawLicenseString();
-    C2D_DrawSprite(&mainStruct->top);
 
     C2D_SceneBegin(bottom_screen);
 

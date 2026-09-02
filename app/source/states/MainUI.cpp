@@ -416,9 +416,10 @@ bool MainUI::drawUI(MainStruct *mainStruct, C3D_RenderTarget* top_screen,
     }
 
     C2D_SceneBegin(top_screen);
+    C2D_DrawSprite(&mainStruct->top);
     DrawVersionString();
     DrawLicenseString();
-    C2D_DrawSprite(&mainStruct->top);
+
 
     if (mainStruct->errorString[0] != 0) {
         DrawString(0.5f, 0xFF000000, mainStruct->errorString, 0);

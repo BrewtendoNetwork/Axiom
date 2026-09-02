@@ -88,7 +88,7 @@ void DrawVersionString() {
         C2D_TextBufClear(textBuf);
         C2D_TextFontParse(&c2d_text, font, textBuf, betaHash.c_str());
         C2D_TextOptimize(&c2d_text);
-        C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, betaHashY, 0.5f, betaHashSize, betaHashSize, C2D_Color32(120, 120, 120, 255));
+        C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignRight, horizontalOffset, betaHashY, 0.5f, betaHashSize, betaHashSize, C2D_Color32(70, 70, 70, 255));
     }
 
     C2D_TextBufClear(textBuf);
@@ -107,7 +107,7 @@ void DrawLicenseString() {
     C2D_TextBufClear(textBuf);
     C2D_TextFontParse(&c2d_text, font, textBuf, text);
     C2D_TextOptimize(&c2d_text);
-    C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset, 0.5f, size, size, C2D_Color32(120, 120, 120, 255));
+    C2D_DrawText(&c2d_text, C2D_WithColor | C2D_AlignLeft, offset, bottomOffset, 0.5f, size, size, C2D_Color32(50, 50, 50, 255));
 }
 
 bool GetLumaOptionByIndex(LumaConfigBitIndex index, s64 options) {
